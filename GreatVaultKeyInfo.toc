@@ -1,0 +1,9 @@
+## Interface: 90002
+## Version: 1
+## Author: dekallo
+## Title: Great Vault Key Info
+## Notes: Provides more info about your keys in the Great Vault.
+## LoadOnDemand: 1
+## LoadWith: Blizzard_WeeklyRewards
+
+GreatVaultKeyInfo.lua
