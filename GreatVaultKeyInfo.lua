@@ -51,7 +51,7 @@ local HandleEarnedMythicRewardTooltip = function(self, itemLevel, upgradeItemLev
         upgradeMythicLevel = self.info.level + 1;
         if upgradeItemLevel == itemLevel then
             for i = upgradeMythicLevel + 1, 15 do
-                upgradeItemLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(self.info.level + i);
+                upgradeItemLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(i);
                 if upgradeItemLevel > itemLevel then
                     upgradeMythicLevel = i;
                     break;
