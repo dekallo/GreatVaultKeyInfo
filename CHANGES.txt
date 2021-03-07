@@ -1,2 +1,6 @@
+v2: 2021-03-07
+    - Show more details for unlocked rewards
+    - Bug fixes
+
 v1: 2021-02-18
     - Initial release
