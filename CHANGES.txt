@@ -1,3 +1,6 @@
+v3: 2021-03-09
+    - Update for 9.0.5
+
 v2: 2021-03-07
     - Show more details for unlocked rewards
     - Bug fixes
