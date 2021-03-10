@@ -19,7 +19,7 @@ local HandleInProgressMythicRewardTooltip = function(self)
         if (self.info.threshold == 10) then
             GameTooltip_AddHighlightLine(GameTooltip, string.format(#runHistory == 1 and "%1$d run this week" or "%1$d runs this week", #runHistory));
         else
-            GameTooltip_AddHighlightLine(GameTooltip, string.format("Top %1$d runs this week", self.info.threshold));
+            GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, self.info.threshold));
         end
         local comparison = function(entry1, entry2)
             if ( entry1.level == entry2.level ) then
@@ -46,8 +46,8 @@ end
 
 local HandleEarnedMythicRewardTooltip = function(self, itemLevel, upgradeItemLevel)
     GameTooltip_AddNormalLine(GameTooltip, string.format(WEEKLY_REWARDS_ITEM_LEVEL_MYTHIC, itemLevel, self.info.level));
-    GameTooltip_AddBlankLineToTooltip(GameTooltip);
     if upgradeItemLevel then
+        GameTooltip_AddBlankLineToTooltip(GameTooltip);
         upgradeMythicLevel = self.info.level + 1;
         if upgradeItemLevel == itemLevel then
             for i = upgradeMythicLevel + 1, 15 do
@@ -59,12 +59,18 @@ local HandleEarnedMythicRewardTooltip = function(self, itemLevel, upgradeItemLev
             end
         end
         GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, upgradeItemLevel), GREEN_FONT_COLOR);
-        GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_MYTHIC, upgradeMythicLevel, self.info.threshold));
+        if self.info.threshold == 1 then
+            GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_MYTHIC_SHORT, upgradeMythicLevel));
+        else
+            GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_MYTHIC, upgradeMythicLevel, self.info.threshold));
+        end
     end
     local runHistory = C_MythicPlus.GetRunHistory(false, true);
     if #runHistory > 0 then
         GameTooltip_AddBlankLineToTooltip(GameTooltip);
-        GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, self.info.threshold));
+        if self.info.threshold ~= 1 then
+            GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, self.info.threshold));
+        end
         local comparison = function(entry1, entry2)
             if ( entry1.level == entry2.level ) then
                 return entry1.mapChallengeModeID < entry2.mapChallengeModeID;
