@@ -44,25 +44,16 @@ local HandleInProgressMythicRewardTooltip = function(self)
     end
 end
 
-local HandleEarnedMythicRewardTooltip = function(self, itemLevel, upgradeItemLevel)
+local HandleEarnedMythicRewardTooltip = function(self, itemLevel)
     GameTooltip_AddNormalLine(GameTooltip, string.format(WEEKLY_REWARDS_ITEM_LEVEL_MYTHIC, itemLevel, self.info.level));
-    if upgradeItemLevel then
+    local hasData, nextLevel, nextItemLevel = C_WeeklyRewards.GetNextMythicPlusIncrease(self.info.level);
+    if hasData and nextLevel and nextItemLevel then
         GameTooltip_AddBlankLineToTooltip(GameTooltip);
-        upgradeMythicLevel = self.info.level + 1;
-        if upgradeItemLevel == itemLevel then
-            for i = upgradeMythicLevel + 1, 15 do
-                upgradeItemLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(i);
-                if upgradeItemLevel > itemLevel then
-                    upgradeMythicLevel = i;
-                    break;
-                end
-            end
-        end
-        GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, upgradeItemLevel), GREEN_FONT_COLOR);
+        GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, nextItemLevel), GREEN_FONT_COLOR);
         if self.info.threshold == 1 then
-            GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_MYTHIC_SHORT, upgradeMythicLevel));
+            GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_MYTHIC_SHORT, nextLevel));
         else
-            GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_MYTHIC, upgradeMythicLevel, self.info.threshold));
+            GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_MYTHIC, nextLevel, self.info.threshold));
         end
     end
     local runHistory = C_MythicPlus.GetRunHistory(false, true);
@@ -113,7 +104,7 @@ local ShowPreviewItemTooltip = function(self)
         if self.info.type == Enum.WeeklyRewardChestThresholdType.Raid then
             self:HandlePreviewRaidRewardTooltip(itemLevel, upgradeItemLevel);
         elseif self.info.type == Enum.WeeklyRewardChestThresholdType.MythicPlus then
-            HandleEarnedMythicRewardTooltip(self, itemLevel, upgradeItemLevel);
+            HandleEarnedMythicRewardTooltip(self, itemLevel);
         elseif self.info.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
             self:HandlePreviewPvPRewardTooltip(itemLevel, upgradeItemLevel);
         end
