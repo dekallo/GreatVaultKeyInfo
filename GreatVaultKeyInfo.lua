@@ -110,15 +110,44 @@ local ShowPreviewItemTooltip = function(self)
         end
         if not upgradeItemLevel then
             GameTooltip_AddBlankLineToTooltip(GameTooltip);
-            GameTooltip_AddColoredLine(GameTooltip, WEEKLY_REWARDS_MAXED_REWARD, GREEN_FONT_COLOR);
+            GameTooltip_AddHighlightLine(GameTooltip, WEEKLY_REWARDS_MAXED_REWARD);
         end
     end
     GameTooltip:Show();
 end
 
+local SetProgressText = function(self, text)
+	local activityInfo = self.info;
+	if text then
+		self.Progress:SetText(text);
+	elseif self.hasRewards then
+		self.Progress:SetText(nil);
+	elseif self.unlocked then
+		if activityInfo.type == Enum.WeeklyRewardChestThresholdType.Raid then
+			local name = DifficultyUtil.GetDifficultyName(activityInfo.level);
+			self.Progress:SetText(name);
+		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.MythicPlus then
+            local rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(activityInfo.level);
+			self.Progress:SetFormattedText("(%d) "..WEEKLY_REWARDS_MYTHIC, rewardLevel, activityInfo.level);
+		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
+			self.Progress:SetText(PVPUtil.GetTierName(activityInfo.level));
+		end
+	else
+		if C_WeeklyRewards.CanClaimRewards() then
+			-- no progress on incomplete activites during claiming
+			self.Progress:SetText(nil);
+		else
+			self.Progress:SetFormattedText(GENERIC_FRACTION_STRING, activityInfo.progress, activityInfo.threshold);
+		end
+	end
+end
+
 WeeklyRewardsFrame.Activities[5].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
 WeeklyRewardsFrame.Activities[5].ShowPreviewItemTooltip = ShowPreviewItemTooltip
+WeeklyRewardsFrame.Activities[5].SetProgressText = SetProgressText
 WeeklyRewardsFrame.Activities[6].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
 WeeklyRewardsFrame.Activities[6].ShowPreviewItemTooltip = ShowPreviewItemTooltip
+WeeklyRewardsFrame.Activities[6].SetProgressText = SetProgressText
 WeeklyRewardsFrame.Activities[7].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
 WeeklyRewardsFrame.Activities[7].ShowPreviewItemTooltip = ShowPreviewItemTooltip
+WeeklyRewardsFrame.Activities[7].SetProgressText = SetProgressText
