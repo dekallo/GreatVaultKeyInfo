@@ -1,3 +1,6 @@
+v6: 2021-06-30
+    - Update for 9.1
+
 v5: 2021-03-15
     - Detailed item level info added to main vault UI
 
