@@ -59,7 +59,9 @@ local HandleEarnedMythicRewardTooltip = function(self, itemLevel)
     local runHistory = C_MythicPlus.GetRunHistory(false, true);
     if #runHistory > 0 then
         GameTooltip_AddBlankLineToTooltip(GameTooltip);
-        if self.info.threshold ~= 1 then
+        if self.info.threshold == 10 and #runHistory > 10 then
+            GameTooltip_AddHighlightLine(GameTooltip, string.format("Top %d of %d Runs This Week", self.info.threshold, #runHistory));
+        elseif self.info.threshold ~= 1 then
             GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, self.info.threshold));
         end
         local comparison = function(entry1, entry2)
@@ -70,13 +72,16 @@ local HandleEarnedMythicRewardTooltip = function(self, itemLevel)
             end
         end
         table.sort(runHistory, comparison);
-        for i = 1, self.info.threshold do
+        local maxLines = self.info.threshold == 10 and #runHistory or self.info.threshold
+        for i = 1, maxLines do
             if runHistory[i] then
                 local runInfo = runHistory[i];
                 local name = C_ChallengeMode.GetMapUIInfo(runInfo.mapChallengeModeID);
                 local rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(runInfo.level);
                 if i == self.info.threshold then
                     GameTooltip_AddColoredLine(GameTooltip, string.format("(%3$d) %1$d - %2$s", runInfo.level, name, rewardLevel), GREEN_FONT_COLOR);
+                elseif i > self.info.threshold then
+                    GameTooltip_AddColoredLine(GameTooltip, string.format("(%3$d) %1$d - %2$s", runInfo.level, name, rewardLevel), GRAY_FONT_COLOR);
                 else
                     GameTooltip_AddHighlightLine(GameTooltip, string.format("(%3$d) %1$d - %2$s", runInfo.level, name, rewardLevel));
                 end
