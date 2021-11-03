@@ -1,5 +1,5 @@
-## Interface: 90100
-## Version: 7
+## Interface: 90105
+## Version: 8
 ## Author: dekallo
 ## Title: Great Vault Key Info
 ## Notes: Provides more info about your keys in the Great Vault.

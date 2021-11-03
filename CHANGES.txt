@@ -1,3 +1,6 @@
+v8: 2021-11-03
+    - Update for 9.1.5
+
 v7: 2021-09-26
     - Shows more info about keys run when you've run more than 10 keys for the week
 
