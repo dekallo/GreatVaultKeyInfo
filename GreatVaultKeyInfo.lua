@@ -3,20 +3,17 @@ local addonName, addon = ...
 -- globals
 local C_MythicPlus, C_ChallengeMode, GetDetailedItemLevelInfo = C_MythicPlus, C_ChallengeMode, GetDetailedItemLevelInfo
 
--- TODO overriding WeeklyRewardsFrame.Activities[7] is dumb, i guess
+-- constants
+local MAX_REWARD_THRESHOLD = 10
 
--- always show tooltip
-local CanShowPreviewItemTooltip = function(self)
-    return not C_WeeklyRewards.CanClaimRewards();
-end
-
+-- reward progress tooltips (for unearned tiers)
 local HandleInProgressMythicRewardTooltip = function(self)
     GameTooltip_SetTitle(GameTooltip, "Reward Locked");
     local runHistory = C_MythicPlus.GetRunHistory(false, true);
     GameTooltip_AddNormalLine(GameTooltip, string.format("Run %1$d more to unlock", self.info.threshold - #runHistory));
     if #runHistory > 0 then
         GameTooltip_AddBlankLineToTooltip(GameTooltip);
-        if (self.info.threshold == 10) then
+        if (self.info.threshold == MAX_REWARD_THRESHOLD) then
             GameTooltip_AddHighlightLine(GameTooltip, string.format(#runHistory == 1 and "%1$d run this week" or "%1$d runs this week", #runHistory));
         else
             GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, self.info.threshold));
@@ -44,6 +41,7 @@ local HandleInProgressMythicRewardTooltip = function(self)
     end
 end
 
+-- earned reward tooltips, as well as run history on the top tier
 local HandleEarnedMythicRewardTooltip = function(self, itemLevel)
     GameTooltip_AddNormalLine(GameTooltip, string.format(WEEKLY_REWARDS_ITEM_LEVEL_MYTHIC, itemLevel, self.info.level));
     local hasData, nextLevel, nextItemLevel = C_WeeklyRewards.GetNextMythicPlusIncrease(self.info.level);
@@ -59,7 +57,7 @@ local HandleEarnedMythicRewardTooltip = function(self, itemLevel)
     local runHistory = C_MythicPlus.GetRunHistory(false, true);
     if #runHistory > 0 then
         GameTooltip_AddBlankLineToTooltip(GameTooltip);
-        if self.info.threshold == 10 and #runHistory > 10 then
+        if self.info.threshold == MAX_REWARD_THRESHOLD and #runHistory > MAX_REWARD_THRESHOLD then
             GameTooltip_AddHighlightLine(GameTooltip, string.format("Top %d of %d Runs This Week", self.info.threshold, #runHistory));
         elseif self.info.threshold ~= 1 then
             GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, self.info.threshold));
@@ -72,7 +70,7 @@ local HandleEarnedMythicRewardTooltip = function(self, itemLevel)
             end
         end
         table.sort(runHistory, comparison);
-        local maxLines = self.info.threshold == 10 and #runHistory or self.info.threshold
+        local maxLines = self.info.threshold == MAX_REWARD_THRESHOLD and #runHistory or self.info.threshold
         for i = 1, maxLines do
             if runHistory[i] then
                 local runInfo = runHistory[i];
@@ -90,7 +88,14 @@ local HandleEarnedMythicRewardTooltip = function(self, itemLevel)
     end
 end
 
--- https://github.com/Gethe/wow-ui-source/blob/live/AddOns/Blizzard_WeeklyRewards/Blizzard_WeeklyRewards.lua
+-- overrides CanShowPreviewItemTooltip
+-- original: https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_WeeklyRewards/Blizzard_WeeklyRewards.lua
+local CanShowPreviewItemTooltip = function(self)
+    return not C_WeeklyRewards.CanClaimRewards();
+end
+
+-- overrides ShowPreviewItemTooltip
+-- original: https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_WeeklyRewards/Blizzard_WeeklyRewards.lua
 local ShowPreviewItemTooltip = function(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -7, -11);
     GameTooltip_SetTitle(GameTooltip, WEEKLY_REWARDS_CURRENT_REWARD);
@@ -121,6 +126,8 @@ local ShowPreviewItemTooltip = function(self)
     GameTooltip:Show();
 end
 
+-- overrides SetProgressText
+-- original: https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_WeeklyRewards/Blizzard_WeeklyRewards.lua
 local SetProgressText = function(self, text)
 	local activityInfo = self.info;
 	if text then
