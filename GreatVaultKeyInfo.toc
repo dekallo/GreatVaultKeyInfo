@@ -5,5 +5,7 @@
 ## Notes: Provides more info about your keys in the Great Vault.
 ## LoadOnDemand: 1
 ## LoadWith: Blizzard_WeeklyRewards
+## X-Curse-Project-ID: 448440
+## X-Wago-ID: nQN5ePNB
 
 GreatVaultKeyInfo.lua
