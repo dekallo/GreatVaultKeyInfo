@@ -7,5 +7,6 @@
 ## LoadWith: Blizzard_WeeklyRewards
 ## X-Curse-Project-ID: 448440
 ## X-Wago-ID: nQN5ePNB
+## X-WoWI-ID: 26180
 
 GreatVaultKeyInfo.lua
