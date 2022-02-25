@@ -3,8 +3,7 @@ local addonName, addon = ...
 -- globals
 local C_MythicPlus, C_ChallengeMode, GetDetailedItemLevelInfo = C_MythicPlus, C_ChallengeMode, GetDetailedItemLevelInfo
 
--- constants
-local MAX_REWARD_THRESHOLD = 10
+local calcMaxRewardThreshold = 0
 
 -- reward progress tooltips (for unearned tiers)
 local HandleInProgressMythicRewardTooltip = function(self)
@@ -13,7 +12,7 @@ local HandleInProgressMythicRewardTooltip = function(self)
     GameTooltip_AddNormalLine(GameTooltip, string.format("Run %1$d more to unlock", self.info.threshold - #runHistory));
     if #runHistory > 0 then
         GameTooltip_AddBlankLineToTooltip(GameTooltip);
-        if (self.info.threshold == MAX_REWARD_THRESHOLD) then
+        if (self.info.threshold == calcMaxRewardThreshold) then
             GameTooltip_AddHighlightLine(GameTooltip, string.format(#runHistory == 1 and "%1$d run this week" or "%1$d runs this week", #runHistory));
         else
             GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, self.info.threshold));
@@ -57,7 +56,7 @@ local HandleEarnedMythicRewardTooltip = function(self, itemLevel)
     local runHistory = C_MythicPlus.GetRunHistory(false, true);
     if #runHistory > 0 then
         GameTooltip_AddBlankLineToTooltip(GameTooltip);
-        if self.info.threshold == MAX_REWARD_THRESHOLD and #runHistory > MAX_REWARD_THRESHOLD then
+        if self.info.threshold == calcMaxRewardThreshold and #runHistory > calcMaxRewardThreshold then
             GameTooltip_AddHighlightLine(GameTooltip, string.format("Top %d of %d Runs This Week", self.info.threshold, #runHistory));
         elseif self.info.threshold ~= 1 then
             GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, self.info.threshold));
@@ -70,7 +69,7 @@ local HandleEarnedMythicRewardTooltip = function(self, itemLevel)
             end
         end
         table.sort(runHistory, comparison);
-        local maxLines = self.info.threshold == MAX_REWARD_THRESHOLD and #runHistory or self.info.threshold
+        local maxLines = self.info.threshold == calcMaxRewardThreshold and #runHistory or self.info.threshold
         for i = 1, maxLines do
             if runHistory[i] then
                 local runInfo = runHistory[i];
@@ -140,6 +139,7 @@ local SetProgressText = function(self, text)
 			self.Progress:SetText(name);
 		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.MythicPlus then
             local rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(activityInfo.level);
+            calcMaxRewardThreshold = max(calcMaxRewardThreshold, activityInfo.threshold);
 			self.Progress:SetFormattedText("(%d) "..WEEKLY_REWARDS_MYTHIC, rewardLevel, activityInfo.level);
 		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
 			self.Progress:SetText(PVPUtil.GetTierName(activityInfo.level));
