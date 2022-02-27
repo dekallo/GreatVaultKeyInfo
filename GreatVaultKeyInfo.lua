@@ -1,9 +1,14 @@
 local addonName, addon = ...
 
 -- globals
-local C_MythicPlus, C_ChallengeMode, GetDetailedItemLevelInfo = C_MythicPlus, C_ChallengeMode, GetDetailedItemLevelInfo
+local C_MythicPlus, C_ChallengeMode, GetDetailedItemLevelInfo, C_WeeklyRewards = C_MythicPlus, C_ChallengeMode, GetDetailedItemLevelInfo, C_WeeklyRewards
 
+-- calculate the max reward threshold
 local calcMaxRewardThreshold = 0
+local activities = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.MythicPlus)
+for i, activityInfo in ipairs(activities) do
+    calcMaxRewardThreshold = max(calcMaxRewardThreshold, activityInfo.threshold);
+end
 
 -- reward progress tooltips (for unearned tiers)
 local HandleInProgressMythicRewardTooltip = function(self)
@@ -139,7 +144,6 @@ local SetProgressText = function(self, text)
 			self.Progress:SetText(name);
 		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.MythicPlus then
             local rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(activityInfo.level);
-            calcMaxRewardThreshold = max(calcMaxRewardThreshold, activityInfo.threshold);
 			self.Progress:SetFormattedText("(%d) "..WEEKLY_REWARDS_MYTHIC, rewardLevel, activityInfo.level);
 		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
 			self.Progress:SetText(PVPUtil.GetTierName(activityInfo.level));
