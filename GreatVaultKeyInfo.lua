@@ -3,11 +3,26 @@ local addonName, addon = ...
 -- globals
 local C_MythicPlus, C_ChallengeMode, GetDetailedItemLevelInfo, C_WeeklyRewards = C_MythicPlus, C_ChallengeMode, GetDetailedItemLevelInfo, C_WeeklyRewards
 
+local GreatVaultKeyInfoFrame = CreateFrame("Frame")
+GreatVaultKeyInfoFrame:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
+GreatVaultKeyInfoFrame:SetScript("OnEvent", function(self, event_name, ...)
+	if self[event_name] then
+		return self[event_name](self, event_name, ...)
+	end
+end)
+
 -- calculate the max reward threshold
-local calcMaxRewardThreshold = 0
-local activities = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.MythicPlus)
-for i, activityInfo in ipairs(activities) do
-    calcMaxRewardThreshold = max(calcMaxRewardThreshold, activityInfo.threshold);
+local calcMaxRewardThreshold = 8
+function GreatVaultKeyInfoFrame:CHALLENGE_MODE_MAPS_UPDATE()
+    calcMaxRewardThreshold = 0
+    local activities = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.MythicPlus)
+    for i, activityInfo in ipairs(activities) do
+        calcMaxRewardThreshold = max(calcMaxRewardThreshold, activityInfo.threshold);
+    end
+    -- fallback to the default if result is empty
+    if calcMaxRewardThreshold == 0 then
+        calcMaxRewardThreshold = 8
+    end
 end
 
 -- reward progress tooltips (for unearned tiers)

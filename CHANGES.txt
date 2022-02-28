@@ -1,3 +1,6 @@
+v12: 2022-02-28
+    - Bug fixes
+
 v11: 2022-02-27
     - Mythic+ max reward threshold adjusted
 
