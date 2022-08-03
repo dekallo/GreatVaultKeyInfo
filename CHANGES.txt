@@ -1,3 +1,6 @@
+v14: 2022-08-03
+    - Fix Blizzard bug with incorrect M+ item levels
+
 v13: 2022-06-01
     - Update for 9.2.5
 
