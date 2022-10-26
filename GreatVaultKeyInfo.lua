@@ -61,8 +61,9 @@ local HandleInProgressMythicRewardTooltip = function(self)
 end
 
 -- earned reward tooltips, as well as run history on the top tier
-local HandleEarnedMythicRewardTooltip = function(self)
-    local itemLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(self.info.level);
+local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
+    local apiItemLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(self.info.level)
+    local itemLevel = apiItemLevel > 0 and apiItemLevel or blizzItemLevel
     GameTooltip_AddNormalLine(GameTooltip, string.format(WEEKLY_REWARDS_ITEM_LEVEL_MYTHIC, itemLevel, self.info.level));
     local hasData, nextLevel, nextItemLevel = C_WeeklyRewards.GetNextMythicPlusIncrease(self.info.level);
     if hasData and nextLevel and nextItemLevel then
@@ -134,7 +135,7 @@ local ShowPreviewItemTooltip = function(self)
         if self.info.type == Enum.WeeklyRewardChestThresholdType.Raid then
             self:HandlePreviewRaidRewardTooltip(itemLevel, upgradeItemLevel);
         elseif self.info.type == Enum.WeeklyRewardChestThresholdType.MythicPlus then
-            HandleEarnedMythicRewardTooltip(self);
+            HandleEarnedMythicRewardTooltip(self, itemLevel);
         elseif self.info.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
             self:HandlePreviewPvPRewardTooltip(itemLevel, upgradeItemLevel);
         end
