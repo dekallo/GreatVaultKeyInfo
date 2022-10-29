@@ -1,11 +1,10 @@
-local addonName, addon = ...
-
 -- globals
-local C_MythicPlus, C_ChallengeMode, GetDetailedItemLevelInfo, C_WeeklyRewards = C_MythicPlus, C_ChallengeMode, C_WeeklyRewards
-local GetDetailedItemLevelInfo = GetDetailedItemLevelInfo
+local C_MythicPlus, C_ChallengeMode, C_WeeklyRewards = C_MythicPlus, C_ChallengeMode, C_WeeklyRewards
+local GetDetailedItemLevelInfo, DifficultyUtil, PVPUtil, CreateFrame, max = GetDetailedItemLevelInfo, DifficultyUtil, PVPUtil, CreateFrame, max
 local WeeklyRewardsFrame, GameTooltip, Enum = WeeklyRewardsFrame, GameTooltip, Enum
+local GameTooltip_SetTitle, GameTooltip_AddNormalLine, GameTooltip_AddHighlightLine, GameTooltip_AddColoredLine, GameTooltip_AddBlankLineToTooltip
 local WEEKLY_REWARDS_MYTHIC_TOP_RUNS, WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, WEEKLY_REWARDS_COMPLETE_MYTHIC_SHORT, WEEKLY_REWARDS_COMPLETE_MYTHIC = WEEKLY_REWARDS_MYTHIC_TOP_RUNS, WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, WEEKLY_REWARDS_COMPLETE_MYTHIC_SHORT, WEEKLY_REWARDS_COMPLETE_MYTHIC
-local WEEKLY_REWARDS_MYTHIC, WEEKLY_REWARDS_MAXED_REWARD, WEEKLY_REWARDS_CURRENT_REWARD = WEEKLY_REWARDS_MYTHIC, WEEKLY_REWARDS_MAXED_REWARD, WEEKLY_REWARDS_CURRENT_REWARD
+local WEEKLY_REWARDS_MYTHIC, WEEKLY_REWARDS_MAXED_REWARD, WEEKLY_REWARDS_CURRENT_REWARD, WEEKLY_REWARDS_ITEM_LEVEL_MYTHIC = WEEKLY_REWARDS_MYTHIC, WEEKLY_REWARDS_MAXED_REWARD, WEEKLY_REWARDS_CURRENT_REWARD, WEEKLY_REWARDS_ITEM_LEVEL_MYTHIC
 local GREEN_FONT_COLOR, GRAY_FONT_COLOR, GENERIC_FRACTION_STRING = GREEN_FONT_COLOR, GRAY_FONT_COLOR, GENERIC_FRACTION_STRING
 
 local GreatVaultKeyInfoFrame = CreateFrame("Frame")
@@ -21,7 +20,7 @@ local calcMaxRewardThreshold = 8
 function GreatVaultKeyInfoFrame:CHALLENGE_MODE_MAPS_UPDATE()
     calcMaxRewardThreshold = 0
     local activities = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.MythicPlus)
-    for i, activityInfo in ipairs(activities) do
+    for _, activityInfo in ipairs(activities) do
         calcMaxRewardThreshold = max(calcMaxRewardThreshold, activityInfo.threshold)
     end
     -- fallback to the default if result is empty
