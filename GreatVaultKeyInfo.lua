@@ -116,7 +116,7 @@ end
 -- overrides CanShowPreviewItemTooltip
 -- original: https://github.com/BigWigsMods/WoWUI/blob/live/AddOns/Blizzard_WeeklyRewards/Blizzard_WeeklyRewards.lua
 local CanShowPreviewItemTooltip = function(self)
-    return not C_WeeklyRewards.CanClaimRewards()
+    return self.info and not C_WeeklyRewards.CanClaimRewards()
 end
 
 -- overrides ShowPreviewItemTooltip
