@@ -19,7 +19,7 @@ end)
 local calcMaxRewardThreshold = 8
 function GreatVaultKeyInfoFrame:CHALLENGE_MODE_MAPS_UPDATE()
     calcMaxRewardThreshold = 0
-    local activities = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.MythicPlus)
+    local activities = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Activities)
     for _, activityInfo in ipairs(activities) do
         calcMaxRewardThreshold = max(calcMaxRewardThreshold, activityInfo.threshold)
     end
@@ -138,7 +138,7 @@ local ShowPreviewItemTooltip = function(self)
         self.UpdateTooltip = nil
         if self.info.type == Enum.WeeklyRewardChestThresholdType.Raid then
             self:HandlePreviewRaidRewardTooltip(itemLevel, upgradeItemLevel)
-        elseif self.info.type == Enum.WeeklyRewardChestThresholdType.MythicPlus then
+        elseif self.info.type == Enum.WeeklyRewardChestThresholdType.Activities then
             HandleEarnedMythicRewardTooltip(self, itemLevel)
         elseif self.info.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
             self:HandlePreviewPvPRewardTooltip(itemLevel, upgradeItemLevel)
@@ -163,7 +163,7 @@ local SetProgressText = function(self, text)
 		if activityInfo.type == Enum.WeeklyRewardChestThresholdType.Raid then
 			local name = DifficultyUtil.GetDifficultyName(activityInfo.level)
 			self.Progress:SetText(name)
-		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.MythicPlus then
+		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.Activities then
             local rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(activityInfo.level)
 			self.Progress:SetFormattedText("(%d) "..WEEKLY_REWARDS_MYTHIC, rewardLevel, activityInfo.level)
 		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
