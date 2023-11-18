@@ -7,6 +7,15 @@ local WEEKLY_REWARDS_MYTHIC_TOP_RUNS, WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, WEEKLY_
 local WEEKLY_REWARDS_MYTHIC, WEEKLY_REWARDS_MAXED_REWARD, WEEKLY_REWARDS_CURRENT_REWARD, WEEKLY_REWARDS_ITEM_LEVEL_MYTHIC = WEEKLY_REWARDS_MYTHIC, WEEKLY_REWARDS_MAXED_REWARD, WEEKLY_REWARDS_CURRENT_REWARD, WEEKLY_REWARDS_ITEM_LEVEL_MYTHIC
 local GREEN_FONT_COLOR, GRAY_FONT_COLOR, GENERIC_FRACTION_STRING = GREEN_FONT_COLOR, GRAY_FONT_COLOR, GENERIC_FRACTION_STRING
 
+-- locale
+local L = {}
+L.reward_locked = "Reward Locked"
+L.run_to_unlock = "Run %1$d more to unlock"
+L.run_this_week = "%1$d run this week"
+L.runs_this_week = "%1$d runs this week"
+L.top_runs_this_week = "Top %d of %d Runs This Week"
+
+-- event frame
 local GreatVaultKeyInfoFrame = CreateFrame("Frame")
 GreatVaultKeyInfoFrame:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
 GreatVaultKeyInfoFrame:SetScript("OnEvent", function(self, event_name, ...)
@@ -31,13 +40,13 @@ end
 
 -- reward progress tooltips (for unearned tiers)
 local HandleInProgressMythicRewardTooltip = function(self)
-	GameTooltip_SetTitle(GameTooltip, "Reward Locked")
+	GameTooltip_SetTitle(GameTooltip, L.reward_locked)
 	local runHistory = C_MythicPlus.GetRunHistory(false, true)
-	GameTooltip_AddNormalLine(GameTooltip, string.format("Run %1$d more to unlock", self.info.threshold - #runHistory))
+	GameTooltip_AddNormalLine(GameTooltip, string.format(L.run_to_unlock, self.info.threshold - #runHistory))
 	if #runHistory > 0 then
 		GameTooltip_AddBlankLineToTooltip(GameTooltip)
 		if (self.info.threshold == calcMaxRewardThreshold) then
-			GameTooltip_AddHighlightLine(GameTooltip, string.format(#runHistory == 1 and "%1$d run this week" or "%1$d runs this week", #runHistory))
+			GameTooltip_AddHighlightLine(GameTooltip, string.format(#runHistory == 1 and L.run_this_week or L.runs_this_week, #runHistory))
 		else
 			GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, self.info.threshold))
 		end
@@ -83,7 +92,7 @@ local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
 	if #runHistory > 0 then
 		GameTooltip_AddBlankLineToTooltip(GameTooltip)
 		if self.info.threshold == calcMaxRewardThreshold and #runHistory > calcMaxRewardThreshold then
-			GameTooltip_AddHighlightLine(GameTooltip, string.format("Top %d of %d Runs This Week", self.info.threshold, #runHistory))
+			GameTooltip_AddHighlightLine(GameTooltip, string.format(L.top_runs_this_week, self.info.threshold, #runHistory))
 		elseif self.info.threshold ~= 1 then
 			GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, self.info.threshold))
 		end
