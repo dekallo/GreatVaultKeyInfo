@@ -33,5 +33,6 @@ globals = {
     "WEEKLY_REWARDS_CURRENT_REWARD",
     "GREEN_FONT_COLOR",
     "GRAY_FONT_COLOR",
-    "GENERIC_FRACTION_STRING"
+    "GENERIC_FRACTION_STRING",
+    "WeeklyRewardsUtil"
 }
