@@ -9,13 +9,18 @@ local GREEN_FONT_COLOR, GRAY_FONT_COLOR, GENERIC_FRACTION_STRING = GREEN_FONT_CO
 local WeeklyRewardsUtil = WeeklyRewardsUtil
 
 -- locals
--- TODO can we fetch these from some API?
-local HEROIC_ITEM_LEVEL = 441
-local MYTHIC_ITEM_LEVEL = 450
+-- this is from https://wago.tools/db2/MythicPlusSeasonRewardLevels?page=1&sort[WeeklyRewardLevel]=asc&filter[MythicPlusSeasonID]=98
+local ItemLevelsBySeason = {
+	[98] = {
+		["HEROIC"] = 441,
+		["MYTHIC"] = 450,
+	},
+}
 -- these do not seem to be documented anywhere
 --local HEROIC_DIFFICULTY_TIER = 2
 --local MYTHIC_DIFFICULTY_TIER = 3
 local MYTHIC_PLUS_DIFFICULTY_TIER = 5
+-- fallback value
 local WEEKLY_MAX_DUNGEON_THRESHOLD = 8
 
 -- localization
@@ -34,6 +39,14 @@ GreatVaultKeyInfoFrame:SetScript("OnEvent", function(self, event_name, ...)
 		return self[event_name](self, event_name, ...)
 	end
 end)
+
+local GetCurrentSeasonRewardLevels = function()
+	local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
+	local currentSeasonRewardLevels = ItemLevelsBySeason[rewardSeasonID]
+	if currentSeasonRewardLevels then
+		return currentSeasonRewardLevels.HEROIC, currentSeasonRewardLevels.MYTHIC
+	end
+end
 
 -- calculate the max reward threshold
 local calcMaxRewardThreshold = WEEKLY_MAX_DUNGEON_THRESHOLD
@@ -86,6 +99,7 @@ local HandleInProgressMythicRewardTooltip = function(self)
 			end
 		end
 	end
+	local HEROIC_ITEM_LEVEL, MYTHIC_ITEM_LEVEL = GetCurrentSeasonRewardLevels()
 	if numMythic > 0 then
 		for i = 1, numMythic do
 			if i == numMythicPlus + numMythic or i == self.info.threshold then
@@ -164,6 +178,7 @@ local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
 			end
 		end
 	end
+	local HEROIC_ITEM_LEVEL, MYTHIC_ITEM_LEVEL = GetCurrentSeasonRewardLevels()
 	if numMythic > 0 then
 		local maxLines = self.info.threshold == calcMaxRewardThreshold and numMythicPlus + numMythic or self.info.threshold
 		for i = numMythicPlus + 1, maxLines do
@@ -241,6 +256,7 @@ local SetProgressText = function(self, text)
 			local name = DifficultyUtil.GetDifficultyName(activityInfo.level)
 			self.Progress:SetText(name)
 		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.Activities then
+			local HEROIC_ITEM_LEVEL, MYTHIC_ITEM_LEVEL = GetCurrentSeasonRewardLevels()
 			if self:IsCompletedAtHeroicLevel() then
 				self.Progress:SetFormattedText("(%d) "..WEEKLY_REWARDS_HEROIC, HEROIC_ITEM_LEVEL)
 			else
