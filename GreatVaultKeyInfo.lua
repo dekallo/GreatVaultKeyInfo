@@ -128,7 +128,7 @@ local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
 	end
 	local itemLevel = apiItemLevel > 0 and apiItemLevel or blizzItemLevel
 	local isHeroicLevel = self:IsCompletedAtHeroicLevel()
-	if isHeroicLevel then		
+	if isHeroicLevel then
 		GameTooltip_AddNormalLine(GameTooltip, string.format(WEEKLY_REWARDS_ITEM_LEVEL_HEROIC, itemLevel))
 	else
 		GameTooltip_AddNormalLine(GameTooltip, string.format(WEEKLY_REWARDS_ITEM_LEVEL_MYTHIC, itemLevel, self.info.level))
