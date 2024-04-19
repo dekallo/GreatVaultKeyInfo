@@ -15,8 +15,13 @@ local ItemLevelsBySeason = {
 		["HEROIC"] = 441,
 		["MYTHIC"] = 450,
 	},
+	[100] = {
+		["HEROIC"] = 489,
+		["MYTHIC"] = 506,
+	},
 }
 -- these do not seem to be documented anywhere
+-- TODO these might be 10, 11, 12 in DF S4
 --local HEROIC_DIFFICULTY_TIER = 2
 --local MYTHIC_DIFFICULTY_TIER = 3
 local MYTHIC_PLUS_DIFFICULTY_TIER = 5
@@ -123,6 +128,7 @@ end
 -- earned reward tooltips, as well as run history on the top tier
 local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
 	local apiItemLevel = 0
+	-- TODO instead check? DifficultyUtil.ID.DungeonChallenge == C_WeeklyRewards.GetDifficultyIDForActivityTier(self.info.activityTierID)
 	if self.info.activityTierID == MYTHIC_PLUS_DIFFICULTY_TIER then
 		apiItemLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(self.info.level)
 	end
