@@ -20,11 +20,6 @@ local ItemLevelsBySeason = {
 		["MYTHIC"] = 506,
 	},
 }
--- these do not seem to be documented anywhere
--- TODO these might be 10, 11, 12 in DF S4
---local HEROIC_DIFFICULTY_TIER = 2
---local MYTHIC_DIFFICULTY_TIER = 3
-local MYTHIC_PLUS_DIFFICULTY_TIER = 5
 -- fallback value
 local WEEKLY_MAX_DUNGEON_THRESHOLD = 8
 
@@ -128,8 +123,7 @@ end
 -- earned reward tooltips, as well as run history on the top tier
 local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
 	local apiItemLevel = 0
-	-- TODO instead check? DifficultyUtil.ID.DungeonChallenge == C_WeeklyRewards.GetDifficultyIDForActivityTier(self.info.activityTierID)
-	if self.info.activityTierID == MYTHIC_PLUS_DIFFICULTY_TIER then
+	if DifficultyUtil.ID.DungeonChallenge == C_WeeklyRewards.GetDifficultyIDForActivityTier(self.info.activityTierID) then
 		apiItemLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(self.info.level)
 	end
 	local itemLevel = apiItemLevel > 0 and apiItemLevel or blizzItemLevel
@@ -140,7 +134,7 @@ local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
 		GameTooltip_AddNormalLine(GameTooltip, string.format(WEEKLY_REWARDS_ITEM_LEVEL_MYTHIC, itemLevel, self.info.level))
 	end
 	local hasData, nextActivityTierID, nextLevel, nextItemLevel = C_WeeklyRewards.GetNextActivitiesIncrease(self.info.activityTierID, self.info.level)
-	if hasData and nextActivityTierID == MYTHIC_PLUS_DIFFICULTY_TIER then
+	if hasData and DifficultyUtil.ID.DungeonChallenge == C_WeeklyRewards.GetDifficultyIDForActivityTier(nextActivityTierID) then
 		-- GetNextActivitiesIncrease just returns current level + 1 as next level, have to use GetNextMythicPlusIncrease to get useful data
 		hasData, nextLevel, nextItemLevel = C_WeeklyRewards.GetNextMythicPlusIncrease(self.info.level)
 	end
