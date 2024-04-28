@@ -11,10 +11,7 @@ local WeeklyRewardsUtil = WeeklyRewardsUtil
 -- locals
 -- this is from https://wago.tools/db2/MythicPlusSeasonRewardLevels?page=1&sort[WeeklyRewardLevel]=asc&filter[MythicPlusSeasonID]=98
 local ItemLevelsBySeason = {
-	[98] = {
-		["HEROIC"] = 441,
-		["MYTHIC"] = 450,
-	},
+	-- Dragonflight Season 4
 	[100] = {
 		["HEROIC"] = 489,
 		["MYTHIC"] = 506,
