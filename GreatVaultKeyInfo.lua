@@ -1,6 +1,6 @@
 -- globals
 local C_MythicPlus, C_ChallengeMode, C_WeeklyRewards = C_MythicPlus, C_ChallengeMode, C_WeeklyRewards
-local GetDetailedItemLevelInfo, DifficultyUtil, PVPUtil, CreateFrame, max = GetDetailedItemLevelInfo, DifficultyUtil, PVPUtil, CreateFrame, max
+local GetDetailedItemLevelInfo, DifficultyUtil, PVPUtil, CreateFrame, max, tostring = GetDetailedItemLevelInfo, DifficultyUtil, PVPUtil, CreateFrame, max, tostring
 local WeeklyRewardsFrame, GameTooltip, Enum = WeeklyRewardsFrame, GameTooltip, Enum
 local GameTooltip_SetTitle, GameTooltip_AddNormalLine, GameTooltip_AddHighlightLine, GameTooltip_AddColoredLine, GameTooltip_AddBlankLineToTooltip = GameTooltip_SetTitle, GameTooltip_AddNormalLine, GameTooltip_AddHighlightLine, GameTooltip_AddColoredLine, GameTooltip_AddBlankLineToTooltip
 local WEEKLY_REWARDS_MYTHIC_TOP_RUNS, WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, WEEKLY_REWARDS_COMPLETE_MYTHIC_SHORT, WEEKLY_REWARDS_COMPLETE_MYTHIC = WEEKLY_REWARDS_MYTHIC_TOP_RUNS, WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, WEEKLY_REWARDS_COMPLETE_MYTHIC_SHORT, WEEKLY_REWARDS_COMPLETE_MYTHIC
@@ -17,6 +17,24 @@ local ItemLevelsBySeason = {
 		["MYTHIC"] = 506,
 	},
 }
+local ItemTiers = {
+	"myth",
+	"hero",
+	"champion",
+	"veteran",
+	"adventurer",
+	-- explorer we don't care about because it can't be rewarded in the vault
+}
+-- this is the minimum starting item level to go up a tier
+local ItemTierItemLevelsBySeason = {
+	[100] = {
+		["myth"] = 519,
+		["hero"] = 506,
+		["champion"] = 493,
+		["veteran"] = 480,
+		["adventurer"] = 466,
+	},
+}
 -- fallback value
 local WEEKLY_MAX_DUNGEON_THRESHOLD = 8
 
@@ -27,6 +45,11 @@ L.run_to_unlock = "Run %1$d more to unlock"
 L.run_this_week = "%1$d run this week"
 L.runs_this_week = "%1$d runs this week"
 L.top_runs_this_week = "Top %d of %d Runs This Week"
+L.myth = "Myth"
+L.hero = "Hero"
+L.champion = "Champion"
+L.veteran = "Veteran"
+L.adventurer = "Adventurer"
 
 -- event frame
 local GreatVaultKeyInfoFrame = CreateFrame("Frame")
@@ -37,6 +60,20 @@ GreatVaultKeyInfoFrame:SetScript("OnEvent", function(self, event_name, ...)
 	end
 end)
 
+-- utility functions
+local GetItemTierFromItemLevel = function(itemLevel)
+	local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
+	local currentSeasonItemTiers = ItemTierItemLevelsBySeason[rewardSeasonID]
+	if currentSeasonItemTiers then
+		for _, itemTierKey in ipairs(ItemTiers) do
+			local itemTierItemLevel = currentSeasonItemTiers[itemTierKey]
+			if itemLevel >= itemTierItemLevel then
+				return ("%d %s"):format(itemLevel, L[itemTierKey])
+			end
+		end
+	end
+	return tostring(itemLevel)
+end
 local GetCurrentSeasonRewardLevels = function()
 	local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
 	local currentSeasonRewardLevels = ItemLevelsBySeason[rewardSeasonID]
@@ -89,9 +126,9 @@ local HandleInProgressMythicRewardTooltip = function(self)
 				local name = C_ChallengeMode.GetMapUIInfo(runInfo.mapChallengeModeID)
 				local rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(runInfo.level)
 				if i == #runHistory or i == self.info.threshold then
-					GameTooltip_AddColoredLine(GameTooltip, string.format("(%3$d) %1$d - %2$s", runInfo.level, name, rewardLevel), GREEN_FONT_COLOR)
+					GameTooltip_AddColoredLine(GameTooltip, string.format("(%3$s) %1$d - %2$s", runInfo.level, name, GetItemTierFromItemLevel(rewardLevel)), GREEN_FONT_COLOR)
 				else
-					GameTooltip_AddHighlightLine(GameTooltip, string.format("(%3$d) %1$d - %2$s", runInfo.level, name, rewardLevel))
+					GameTooltip_AddHighlightLine(GameTooltip, string.format("(%3$s) %1$d - %2$s", runInfo.level, name, GetItemTierFromItemLevel(rewardLevel)))
 				end
 			end
 		end
@@ -100,18 +137,18 @@ local HandleInProgressMythicRewardTooltip = function(self)
 	if numMythic > 0 then
 		for i = 1, numMythic do
 			if i == numMythicPlus + numMythic or i == self.info.threshold then
-				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$d) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), MYTHIC_ITEM_LEVEL), GREEN_FONT_COLOR)
+				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)), GREEN_FONT_COLOR)
 			else
-				GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$d) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), MYTHIC_ITEM_LEVEL))
+				GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)))
 			end
 		end
 	end
 	if numHeroic > 0 then
 		for i = 1, numHeroic do
 			if i == numMythicPlus + numMythic + numHeroic or i == self.info.threshold then
-				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$d) %1$s", WEEKLY_REWARDS_HEROIC, HEROIC_ITEM_LEVEL), GREEN_FONT_COLOR)
+				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)), GREEN_FONT_COLOR)
 			else
-				GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$d) %1$s", WEEKLY_REWARDS_HEROIC, HEROIC_ITEM_LEVEL))
+				GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)))
 			end
 		end
 	end
@@ -171,11 +208,11 @@ local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
 				local name = C_ChallengeMode.GetMapUIInfo(runInfo.mapChallengeModeID)
 				local rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(runInfo.level)
 				if i == self.info.threshold then
-					GameTooltip_AddColoredLine(GameTooltip, string.format("(%3$d) %1$d - %2$s", runInfo.level, name, rewardLevel), GREEN_FONT_COLOR)
+					GameTooltip_AddColoredLine(GameTooltip, string.format("(%3$s) %1$d - %2$s", runInfo.level, name, GetItemTierFromItemLevel(rewardLevel)), GREEN_FONT_COLOR)
 				elseif i > self.info.threshold then
-					GameTooltip_AddColoredLine(GameTooltip, string.format("(%3$d) %1$d - %2$s", runInfo.level, name, rewardLevel), GRAY_FONT_COLOR)
+					GameTooltip_AddColoredLine(GameTooltip, string.format("(%3$s) %1$d - %2$s", runInfo.level, name, GetItemTierFromItemLevel(rewardLevel)), GRAY_FONT_COLOR)
 				else
-					GameTooltip_AddHighlightLine(GameTooltip, string.format("(%3$d) %1$d - %2$s", runInfo.level, name, rewardLevel))
+					GameTooltip_AddHighlightLine(GameTooltip, string.format("(%3$s) %1$d - %2$s", runInfo.level, name, GetItemTierFromItemLevel(rewardLevel)))
 				end
 			end
 		end
@@ -185,11 +222,11 @@ local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
 		local maxLines = self.info.threshold == calcMaxRewardThreshold and numMythicPlus + numMythic or self.info.threshold
 		for i = numMythicPlus + 1, maxLines do
 			if i == self.info.threshold then
-				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$d) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), MYTHIC_ITEM_LEVEL), GREEN_FONT_COLOR)
+				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)), GREEN_FONT_COLOR)
 			elseif i > self.info.threshold then
-				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$d) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), MYTHIC_ITEM_LEVEL), GRAY_FONT_COLOR)
+				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)), GRAY_FONT_COLOR)
 			else
-				GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$d) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), MYTHIC_ITEM_LEVEL))
+				GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)))
 			end
 		end
 	end
@@ -197,11 +234,11 @@ local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
 		local maxLines = self.info.threshold == calcMaxRewardThreshold and numDungeons or self.info.threshold
 		for i = numMythicPlus + numMythic + 1, maxLines do
 			if i == self.info.threshold then
-				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$d) %1$s", WEEKLY_REWARDS_HEROIC, HEROIC_ITEM_LEVEL), GREEN_FONT_COLOR)
+				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)), GREEN_FONT_COLOR)
 			elseif i > self.info.threshold then
-				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$d) %1$s", WEEKLY_REWARDS_HEROIC, HEROIC_ITEM_LEVEL), GRAY_FONT_COLOR)
+				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)), GRAY_FONT_COLOR)
 			else
-				GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$d) %1$s", WEEKLY_REWARDS_HEROIC, HEROIC_ITEM_LEVEL))
+				GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)))
 			end
 		end
 	end
@@ -260,15 +297,15 @@ local SetProgressText = function(self, text)
 		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.Activities then
 			local HEROIC_ITEM_LEVEL, MYTHIC_ITEM_LEVEL = GetCurrentSeasonRewardLevels()
 			if self:IsCompletedAtHeroicLevel() then
-				self.Progress:SetFormattedText("(%d) "..WEEKLY_REWARDS_HEROIC, HEROIC_ITEM_LEVEL)
+				self.Progress:SetFormattedText("(%s) %s", GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL), WEEKLY_REWARDS_HEROIC)
 			else
-				local rewardLevel
 				if activityInfo.level >= 2 then
-					rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(activityInfo.level)
+					local rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(activityInfo.level)
+					self.Progress:SetFormattedText("(%s) +%d", GetItemTierFromItemLevel(rewardLevel), activityInfo.level)
 				else
-					rewardLevel = MYTHIC_ITEM_LEVEL
+					local rewardLevel = MYTHIC_ITEM_LEVEL
+					self.Progress:SetFormattedText("(%s) %s", GetItemTierFromItemLevel(rewardLevel), WEEKLY_REWARDS_MYTHIC:format(activityInfo.level))
 				end
-				self.Progress:SetFormattedText("(%d) "..WEEKLY_REWARDS_MYTHIC, rewardLevel, activityInfo.level)
 			end
 		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
 			self.Progress:SetText(PVPUtil.GetTierName(activityInfo.level))

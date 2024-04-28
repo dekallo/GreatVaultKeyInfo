@@ -36,5 +36,6 @@ globals = {
     "GREEN_FONT_COLOR",
     "GRAY_FONT_COLOR",
     "GENERIC_FRACTION_STRING",
+    "tostring",
     "WeeklyRewardsUtil"
 }
