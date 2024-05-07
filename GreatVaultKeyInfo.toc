@@ -1,4 +1,4 @@
-## Interface: 100206
+## Interface: 100207
 ## Version: @project-version@
 ## Author: dekallo
 ## Title: Great Vault Key Info
@@ -6,6 +6,7 @@
 ## LoadOnDemand: 1
 ## LoadWith: Blizzard_WeeklyRewards
 ## IconTexture: Interface\AddOns\GreatVaultKeyInfo\icon
+## X-Source: https://github.com/dekallo/GreatVaultKeyInfo
 ## X-Website: https://www.curseforge.com/wow/addons/great-vault-key-info
 ## X-Curse-Project-ID: 448440
 ## X-Wago-ID: nQN5ePNB
