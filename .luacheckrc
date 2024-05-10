@@ -7,12 +7,12 @@ ignore = {
     "212/self"
 }
 globals = {
-    "C_MythicPlus",
     "C_ChallengeMode",
+    "C_Item",
+    "C_MythicPlus",
     "C_WeeklyRewards",
     "CreateFrame",
     "max",
-    "GetDetailedItemLevelInfo",
     "WeeklyRewardsFrame",
     "GameTooltip",
     "GameTooltip_SetTitle",

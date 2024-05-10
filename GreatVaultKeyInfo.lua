@@ -1,6 +1,6 @@
 -- globals
 local C_MythicPlus, C_ChallengeMode, C_WeeklyRewards = C_MythicPlus, C_ChallengeMode, C_WeeklyRewards
-local GetDetailedItemLevelInfo, DifficultyUtil, PVPUtil, CreateFrame, max, tostring = GetDetailedItemLevelInfo, DifficultyUtil, PVPUtil, CreateFrame, max, tostring
+local C_Item, DifficultyUtil, PVPUtil, CreateFrame, max, tostring = C_Item, DifficultyUtil, PVPUtil, CreateFrame, max, tostring
 local WeeklyRewardsFrame, GameTooltip, Enum = WeeklyRewardsFrame, GameTooltip, Enum
 local GameTooltip_SetTitle, GameTooltip_AddNormalLine, GameTooltip_AddHighlightLine, GameTooltip_AddColoredLine, GameTooltip_AddBlankLineToTooltip = GameTooltip_SetTitle, GameTooltip_AddNormalLine, GameTooltip_AddHighlightLine, GameTooltip_AddColoredLine, GameTooltip_AddBlankLineToTooltip
 local WEEKLY_REWARDS_MYTHIC_TOP_RUNS, WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, WEEKLY_REWARDS_COMPLETE_MYTHIC_SHORT, WEEKLY_REWARDS_COMPLETE_MYTHIC = WEEKLY_REWARDS_MYTHIC_TOP_RUNS, WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, WEEKLY_REWARDS_COMPLETE_MYTHIC_SHORT, WEEKLY_REWARDS_COMPLETE_MYTHIC
@@ -258,10 +258,10 @@ local ShowPreviewItemTooltip = function(self)
 	local itemLink, upgradeItemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(self.info.id)
 	local itemLevel, upgradeItemLevel
 	if itemLink then
-		itemLevel = GetDetailedItemLevelInfo(itemLink)
+		itemLevel = C_Item.GetDetailedItemLevelInfo(itemLink)
 	end
 	if upgradeItemLink then
-		upgradeItemLevel = GetDetailedItemLevelInfo(upgradeItemLink)
+		upgradeItemLevel = C_Item.GetDetailedItemLevelInfo(upgradeItemLink)
 	end
 	if not itemLevel and not self.unlocked then
 		HandleInProgressMythicRewardTooltip(self)
