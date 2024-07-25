@@ -15,11 +15,29 @@ local ItemLevelsBySeason = {
 	[100] = {
 		["HEROIC"] = 489,
 		["MYTHIC"] = 506,
+		[2] = 509,
+		[3] = 509,
+		[4] = 512,
+		[5] = 512,
+		[6] = 515,
+		[7] = 515,
+		[8] = 519,
+		[9] = 519,
+		[10] = 522,
 	},
 	-- Dragonflight Season 4 (post-season)
 	[102] = {
 		["HEROIC"] = 489,
 		["MYTHIC"] = 506,
+		[2] = 509,
+		[3] = 509,
+		[4] = 512,
+		[5] = 512,
+		[6] = 515,
+		[7] = 515,
+		[8] = 519,
+		[9] = 519,
+		[10] = 522,
 	},
 }
 local ItemTiers = {
@@ -95,6 +113,21 @@ local GetCurrentSeasonRewardLevels = function()
 		return currentSeasonRewardLevels.HEROIC, currentSeasonRewardLevels.MYTHIC
 	end
 end
+local GetRewardLevelFromKeystoneLevel = function(keystoneLevel)
+	local rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(keystoneLevel)
+	if rewardLevel == 0 then
+		-- sometimes Blizzard forgets to make their code work properly
+		local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
+		local currentSeasonRewardLevels = ItemLevelsBySeason[rewardSeasonID]
+		if currentSeasonRewardLevels then
+			if keystoneLevel > 10 then
+				keystoneLevel = 10
+			end
+			return currentSeasonRewardLevels[keystoneLevel] or rewardLevel
+		end
+	end
+	return rewardLevel
+end
 local comparison = function(entry1, entry2)
 	if entry1.level == entry2.level then
 		return entry1.mapChallengeModeID < entry2.mapChallengeModeID
@@ -138,7 +171,7 @@ local HandleInProgressMythicRewardTooltip = function(self)
 			if runHistory[i] then
 				local runInfo = runHistory[i]
 				local name = C_ChallengeMode.GetMapUIInfo(runInfo.mapChallengeModeID)
-				local rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(runInfo.level)
+				local rewardLevel = GetRewardLevelFromKeystoneLevel(runInfo.level)
 				if i == #runHistory or i == self.info.threshold then
 					GameTooltip_AddColoredLine(GameTooltip, string.format("(%3$s) %1$d - %2$s", runInfo.level, name, GetItemTierFromItemLevel(rewardLevel)), GREEN_FONT_COLOR)
 				else
@@ -174,7 +207,7 @@ end
 local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
 	local apiItemLevel = 0
 	if DifficultyUtil.ID.DungeonChallenge == C_WeeklyRewards.GetDifficultyIDForActivityTier(self.info.activityTierID) then
-		apiItemLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(self.info.level)
+		apiItemLevel = GetRewardLevelFromKeystoneLevel(self.info.level)
 	end
 	local itemLevel = apiItemLevel > 0 and apiItemLevel or blizzItemLevel
 	local isHeroicLevel = self:IsCompletedAtHeroicLevel()
@@ -215,7 +248,7 @@ local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
 			if runHistory[i] then
 				local runInfo = runHistory[i]
 				local name = C_ChallengeMode.GetMapUIInfo(runInfo.mapChallengeModeID)
-				local rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(runInfo.level)
+				local rewardLevel = GetRewardLevelFromKeystoneLevel(runInfo.level)
 				if i == self.info.threshold then
 					GameTooltip_AddColoredLine(GameTooltip, string.format("(%3$s) %1$d - %2$s", runInfo.level, name, GetItemTierFromItemLevel(rewardLevel)), GREEN_FONT_COLOR)
 				elseif i > self.info.threshold then
@@ -311,7 +344,7 @@ local SetProgressText = function(self, text)
 				self.Progress:SetFormattedText("(%s) %s", GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL), WEEKLY_REWARDS_HEROIC)
 			else
 				if activityInfo.level >= 2 then
-					local rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(activityInfo.level)
+					local rewardLevel = GetRewardLevelFromKeystoneLevel(activityInfo.level)
 					self.Progress:SetFormattedText("(%s) +%d", GetItemTierFromItemLevel(rewardLevel), activityInfo.level)
 				else
 					local rewardLevel = MYTHIC_ITEM_LEVEL
