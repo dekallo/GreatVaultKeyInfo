@@ -16,6 +16,11 @@ local ItemLevelsBySeason = {
 		["HEROIC"] = 489,
 		["MYTHIC"] = 506,
 	},
+	-- Dragonflight Season 4 (post-season)
+	[102] = {
+		["HEROIC"] = 489,
+		["MYTHIC"] = 506,
+	},
 }
 local ItemTiers = {
 	"myth",
@@ -27,7 +32,16 @@ local ItemTiers = {
 }
 -- this is the minimum starting item level to go up a tier
 local ItemTierItemLevelsBySeason = {
+	-- Dragonflight Season 4
 	[100] = {
+		["myth"] = 519,
+		["hero"] = 506,
+		["champion"] = 493,
+		["veteran"] = 480,
+		["adventurer"] = 466,
+	},
+	-- Dragonflight Season 4 (post-season)
+	[102] = {
 		["myth"] = 519,
 		["hero"] = 506,
 		["champion"] = 493,
