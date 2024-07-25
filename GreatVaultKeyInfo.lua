@@ -95,6 +95,13 @@ local GetCurrentSeasonRewardLevels = function()
 		return currentSeasonRewardLevels.HEROIC, currentSeasonRewardLevels.MYTHIC
 	end
 end
+local comparison = function(entry1, entry2)
+	if entry1.level == entry2.level then
+		return entry1.mapChallengeModeID < entry2.mapChallengeModeID
+	else
+		return entry1.level > entry2.level
+	end
+end
 
 -- calculate the max reward threshold
 local calcMaxRewardThreshold = WEEKLY_MAX_DUNGEON_THRESHOLD
@@ -126,13 +133,6 @@ local HandleInProgressMythicRewardTooltip = function(self)
 		end
 	end
 	if #runHistory > 0 then
-		local comparison = function(entry1, entry2)
-			if entry1.level == entry2.level then
-				return entry1.mapChallengeModeID < entry2.mapChallengeModeID
-			else
-				return entry1.level > entry2.level
-			end
-		end
 		table.sort(runHistory, comparison)
 		for i = 1, #runHistory do
 			if runHistory[i] then
@@ -147,22 +147,24 @@ local HandleInProgressMythicRewardTooltip = function(self)
 			end
 		end
 	end
-	local HEROIC_ITEM_LEVEL, MYTHIC_ITEM_LEVEL = GetCurrentSeasonRewardLevels()
-	if numMythic > 0 then
-		for i = 1, numMythic do
-			if i == numMythicPlus + numMythic or i == self.info.threshold then
-				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)), GREEN_FONT_COLOR)
-			else
-				GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)))
+	if numMythic > 0 or numHeroic > 0 then
+		local HEROIC_ITEM_LEVEL, MYTHIC_ITEM_LEVEL = GetCurrentSeasonRewardLevels()
+		if numMythic > 0 then
+			for i = 1, numMythic do
+				if i == numMythicPlus + numMythic or i == self.info.threshold then
+					GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)), GREEN_FONT_COLOR)
+				else
+					GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)))
+				end
 			end
 		end
-	end
-	if numHeroic > 0 then
-		for i = 1, numHeroic do
-			if i == numMythicPlus + numMythic + numHeroic or i == self.info.threshold then
-				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)), GREEN_FONT_COLOR)
-			else
-				GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)))
+		if numHeroic > 0 then
+			for i = 1, numHeroic do
+				if i == numMythicPlus + numMythic + numHeroic or i == self.info.threshold then
+					GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)), GREEN_FONT_COLOR)
+				else
+					GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)))
+				end
 			end
 		end
 	end
@@ -207,13 +209,6 @@ local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
 		end
 	end
 	if #runHistory > 0 then
-		local comparison = function(entry1, entry2)
-			if entry1.level == entry2.level then
-				return entry1.mapChallengeModeID < entry2.mapChallengeModeID
-			else
-				return entry1.level > entry2.level
-			end
-		end
 		table.sort(runHistory, comparison)
 		local maxLines = self.info.threshold == calcMaxRewardThreshold and #runHistory or self.info.threshold
 		for i = 1, maxLines do
@@ -231,28 +226,30 @@ local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
 			end
 		end
 	end
-	local HEROIC_ITEM_LEVEL, MYTHIC_ITEM_LEVEL = GetCurrentSeasonRewardLevels()
-	if numMythic > 0 then
-		local maxLines = self.info.threshold == calcMaxRewardThreshold and numMythicPlus + numMythic or self.info.threshold
-		for i = numMythicPlus + 1, maxLines do
-			if i == self.info.threshold then
-				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)), GREEN_FONT_COLOR)
-			elseif i > self.info.threshold then
-				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)), GRAY_FONT_COLOR)
-			else
-				GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)))
+	if numMythic > 0 or numHeroic > 0 then
+		local HEROIC_ITEM_LEVEL, MYTHIC_ITEM_LEVEL = GetCurrentSeasonRewardLevels()
+		if numMythic > 0 then
+			local maxLines = self.info.threshold == calcMaxRewardThreshold and numMythicPlus + numMythic or self.info.threshold
+			for i = numMythicPlus + 1, maxLines do
+				if i == self.info.threshold then
+					GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)), GREEN_FONT_COLOR)
+				elseif i > self.info.threshold then
+					GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)), GRAY_FONT_COLOR)
+				else
+					GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)))
+				end
 			end
 		end
-	end
-	if numHeroic > 0 then
-		local maxLines = self.info.threshold == calcMaxRewardThreshold and numDungeons or self.info.threshold
-		for i = numMythicPlus + numMythic + 1, maxLines do
-			if i == self.info.threshold then
-				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)), GREEN_FONT_COLOR)
-			elseif i > self.info.threshold then
-				GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)), GRAY_FONT_COLOR)
-			else
-				GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)))
+		if numHeroic > 0 then
+			local maxLines = self.info.threshold == calcMaxRewardThreshold and numDungeons or self.info.threshold
+			for i = numMythicPlus + numMythic + 1, maxLines do
+				if i == self.info.threshold then
+					GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)), GREEN_FONT_COLOR)
+				elseif i > self.info.threshold then
+					GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)), GRAY_FONT_COLOR)
+				else
+					GameTooltip_AddHighlightLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)))
+				end
 			end
 		end
 	end
