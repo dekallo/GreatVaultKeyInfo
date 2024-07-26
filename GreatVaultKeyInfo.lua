@@ -135,7 +135,7 @@ local GetCurrentSeasonRewardLevels = function()
 		return currentSeasonRewardLevels.HEROIC, currentSeasonRewardLevels.MYTHIC
 	end
 end
-local GetRewardLevelFromKeystoneLevel = function(keystoneLevel)
+local GetRewardLevelFromKeystoneLevel = function(keystoneLevel, blizzItemLevel)
 	local rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(keystoneLevel)
 	if rewardLevel == 0 then
 		-- sometimes Blizzard forgets to make their code work properly
@@ -145,7 +145,7 @@ local GetRewardLevelFromKeystoneLevel = function(keystoneLevel)
 			if keystoneLevel > 10 then
 				keystoneLevel = 10
 			end
-			return currentSeasonRewardLevels[keystoneLevel] or rewardLevel
+			return currentSeasonRewardLevels[keystoneLevel] or blizzItemLevel or 0
 		end
 	end
 	return rewardLevel
@@ -227,13 +227,13 @@ end
 
 -- earned reward tooltips, as well as run history on the top tier
 local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
-	local apiItemLevel = 0
+	local itemLevel
 	if DifficultyUtil.ID.DungeonChallenge == C_WeeklyRewards.GetDifficultyIDForActivityTier(self.info.activityTierID) then
-		apiItemLevel = GetRewardLevelFromKeystoneLevel(self.info.level)
+		itemLevel = GetRewardLevelFromKeystoneLevel(self.info.level, blizzItemLevel)
+	else
+		itemLevel = blizzItemLevel
 	end
-	local itemLevel = apiItemLevel > 0 and apiItemLevel or blizzItemLevel
-	local isHeroicLevel = self:IsCompletedAtHeroicLevel()
-	if isHeroicLevel then
+	if self:IsCompletedAtHeroicLevel() then
 		GameTooltip_AddNormalLine(GameTooltip, string.format(WEEKLY_REWARDS_ITEM_LEVEL_HEROIC, itemLevel))
 	else
 		GameTooltip_AddNormalLine(GameTooltip, string.format(WEEKLY_REWARDS_ITEM_LEVEL_MYTHIC, itemLevel, self.info.level))
