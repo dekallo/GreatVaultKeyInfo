@@ -39,6 +39,20 @@ local ItemLevelsBySeason = {
 		[9] = 519,
 		[10] = 522,
 	},
+	-- The War Within Season 1
+	[99] = {
+		["HEROIC"] = 593,
+		["MYTHIC"] = 603,
+		[2] = 606,
+		[3] = 610,
+		[4] = 610,
+		[5] = 613,
+		[6] = 613,
+		[7] = 616,
+		[8] = 619,
+		[9] = 619,
+		[10] = 623,
+	},
 }
 local ItemTiers = {
 	"myth",
@@ -65,6 +79,14 @@ local ItemTierItemLevelsBySeason = {
 		["champion"] = 493,
 		["veteran"] = 480,
 		["adventurer"] = 466,
+	},
+	-- The War Within Season 1
+	[99] = {
+		["myth"] = 623,
+		["hero"] = 610,
+		["champion"] = 597,
+		["veteran"] = 584,
+		["adventurer"] = 571,
 	},
 }
 -- fallback value
