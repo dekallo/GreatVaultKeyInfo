@@ -11,34 +11,6 @@ local WeeklyRewardsUtil = WeeklyRewardsUtil
 -- locals
 -- this is from https://wago.tools/db2/MythicPlusSeasonRewardLevels?page=1&sort[WeeklyRewardLevel]=asc&filter[MythicPlusSeasonID]=98
 local ItemLevelsBySeason = {
-	-- Dragonflight Season 4
-	[100] = {
-		["HEROIC"] = 489,
-		["MYTHIC"] = 506,
-		[2] = 509,
-		[3] = 509,
-		[4] = 512,
-		[5] = 512,
-		[6] = 515,
-		[7] = 515,
-		[8] = 519,
-		[9] = 519,
-		[10] = 522,
-	},
-	-- Dragonflight Season 4 (post-season)
-	[102] = {
-		["HEROIC"] = 489,
-		["MYTHIC"] = 506,
-		[2] = 509,
-		[3] = 509,
-		[4] = 512,
-		[5] = 512,
-		[6] = 515,
-		[7] = 515,
-		[8] = 519,
-		[9] = 519,
-		[10] = 522,
-	},
 	-- The War Within Season 1
 	[99] = {
 		["HEROIC"] = 593,
@@ -64,22 +36,6 @@ local ItemTiers = {
 }
 -- this is the minimum starting item level to go up a tier
 local ItemTierItemLevelsBySeason = {
-	-- Dragonflight Season 4
-	[100] = {
-		["myth"] = 519,
-		["hero"] = 506,
-		["champion"] = 493,
-		["veteran"] = 480,
-		["adventurer"] = 466,
-	},
-	-- Dragonflight Season 4 (post-season)
-	[102] = {
-		["myth"] = 519,
-		["hero"] = 506,
-		["champion"] = 493,
-		["veteran"] = 480,
-		["adventurer"] = 466,
-	},
 	-- The War Within Season 1
 	[99] = {
 		["myth"] = 623,
