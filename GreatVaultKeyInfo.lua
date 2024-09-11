@@ -330,7 +330,7 @@ local ShowPreviewItemTooltip = function(self)
 		elseif self.info.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
 			self:HandlePreviewPvPRewardTooltip(itemLevel, upgradeItemLevel)
 		elseif self.info.type == Enum.WeeklyRewardChestThresholdType.World then
-			local hasData, nextActivityTierID, nextLevel, nextItemLevel = C_WeeklyRewards.GetNextActivitiesIncrease(self.info.activityTierID, self.info.level)
+			local hasData, _, nextLevel, nextItemLevel = C_WeeklyRewards.GetNextActivitiesIncrease(self.info.activityTierID, self.info.level)
 			if hasData then
 				upgradeItemLevel = nextItemLevel
 			else
