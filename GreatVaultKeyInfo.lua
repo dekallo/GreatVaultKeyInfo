@@ -9,8 +9,8 @@ local GREEN_FONT_COLOR, GRAY_FONT_COLOR, GENERIC_FRACTION_STRING = GREEN_FONT_CO
 local WeeklyRewardsUtil = WeeklyRewardsUtil
 
 -- locals
--- this is from https://wago.tools/db2/MythicPlusSeasonRewardLevels?page=1&sort[WeeklyRewardLevel]=asc&filter[MythicPlusSeasonID]=98
-local ItemLevelsBySeason = {
+-- this is from https://wago.tools/db2/MythicPlusSeasonRewardLevels?page=1&sort[WeeklyRewardLevel]=asc&filter[MythicPlusSeasonID]=99
+local DungeonItemLevelsBySeason = {
 	-- The War Within Season 1
 	[99] = {
 		["HEROIC"] = 593,
@@ -24,6 +24,19 @@ local ItemLevelsBySeason = {
 		[8] = 619,
 		[9] = 619,
 		[10] = 623,
+	},
+}
+local WorldItemLevelsBySeason = {
+	-- The War Within Season 1
+	[99] = {
+		[1] = 584,
+		[2] = 587,
+		[3] = 590,
+		[4] = 593,
+		[5] = 600,
+		[6] = 606,
+		[7] = 610,
+		[8] = 616,
 	},
 }
 local ItemTiers = {
@@ -86,7 +99,7 @@ local GetItemTierFromItemLevel = function(itemLevel)
 end
 local GetCurrentSeasonRewardLevels = function()
 	local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
-	local currentSeasonRewardLevels = ItemLevelsBySeason[rewardSeasonID]
+	local currentSeasonRewardLevels = DungeonItemLevelsBySeason[rewardSeasonID]
 	if currentSeasonRewardLevels then
 		return currentSeasonRewardLevels.HEROIC, currentSeasonRewardLevels.MYTHIC
 	end
@@ -96,7 +109,7 @@ local GetRewardLevelFromKeystoneLevel = function(keystoneLevel, blizzItemLevel)
 	if rewardLevel == 0 then
 		-- sometimes Blizzard forgets to make their code work properly
 		local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
-		local currentSeasonRewardLevels = ItemLevelsBySeason[rewardSeasonID]
+		local currentSeasonRewardLevels = DungeonItemLevelsBySeason[rewardSeasonID]
 		if currentSeasonRewardLevels then
 			if keystoneLevel > 10 then
 				keystoneLevel = 10
@@ -105,6 +118,17 @@ local GetRewardLevelFromKeystoneLevel = function(keystoneLevel, blizzItemLevel)
 		end
 	end
 	return rewardLevel
+end
+local GetRewardLevelFromDelveLevel = function(delveLevel, blizzItemLevel)
+	local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
+	local currentSeasonRewardLevels = WorldItemLevelsBySeason[rewardSeasonID]
+	if currentSeasonRewardLevels then
+		if delveLevel > 8 then
+			delveLevel = 8
+		end
+		return currentSeasonRewardLevels[delveLevel] or blizzItemLevel or 0
+	end
+	return blizzItemLevel or 0
 end
 local comparison = function(entry1, entry2)
 	if entry1.level == entry2.level then
@@ -129,7 +153,7 @@ function GreatVaultKeyInfoFrame:CHALLENGE_MODE_MAPS_UPDATE()
 end
 
 -- reward progress tooltips (for unearned tiers)
-local HandleInProgressMythicRewardTooltip = function(self)
+local HandleInProgressDungeonRewardTooltip = function(self)
 	GameTooltip_SetTitle(GameTooltip, L.reward_locked)
 	local runHistory = C_MythicPlus.GetRunHistory(false, true)
 	local numHeroic, numMythic, numMythicPlus = C_WeeklyRewards.GetNumCompletedDungeonRuns()
@@ -182,7 +206,7 @@ local HandleInProgressMythicRewardTooltip = function(self)
 end
 
 -- earned reward tooltips, as well as run history on the top tier
-local HandleEarnedMythicRewardTooltip = function(self, blizzItemLevel)
+local HandleEarnedDungeonRewardTooltip = function(self, blizzItemLevel)
 	local itemLevel
 	if DifficultyUtil.ID.DungeonChallenge == C_WeeklyRewards.GetDifficultyIDForActivityTier(self.info.activityTierID) then
 		itemLevel = GetRewardLevelFromKeystoneLevel(self.info.level, blizzItemLevel)
@@ -286,15 +310,33 @@ local ShowPreviewItemTooltip = function(self)
 		upgradeItemLevel = C_Item.GetDetailedItemLevelInfo(upgradeItemLink)
 	end
 	if not itemLevel and not self.unlocked then
-		HandleInProgressMythicRewardTooltip(self)
+		if self.info.type == Enum.WeeklyRewardChestThresholdType.Activities then
+			HandleInProgressDungeonRewardTooltip(self)
+		elseif self.info.type == Enum.WeeklyRewardChestThresholdType.World then
+			local description = GREAT_VAULT_REWARDS_WORLD_INCOMPLETE
+			if self.info.index == 2 then
+				description = GREAT_VAULT_REWARDS_WORLD_COMPLETED_FIRST
+			elseif self.info.index == 3 then
+				description = GREAT_VAULT_REWARDS_WORLD_COMPLETED_SECOND
+			end
+			self:ShowIncompleteTooltip(WEEKLY_REWARDS_UNLOCK_REWARD, description, true)
+		end
 	else
 		self.UpdateTooltip = nil
 		if self.info.type == Enum.WeeklyRewardChestThresholdType.Raid then
 			self:HandlePreviewRaidRewardTooltip(itemLevel, upgradeItemLevel)
 		elseif self.info.type == Enum.WeeklyRewardChestThresholdType.Activities then
-			HandleEarnedMythicRewardTooltip(self, itemLevel)
+			HandleEarnedDungeonRewardTooltip(self, itemLevel)
 		elseif self.info.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
 			self:HandlePreviewPvPRewardTooltip(itemLevel, upgradeItemLevel)
+		elseif self.info.type == Enum.WeeklyRewardChestThresholdType.World then
+			local hasData, nextActivityTierID, nextLevel, nextItemLevel = C_WeeklyRewards.GetNextActivitiesIncrease(self.info.activityTierID, self.info.level)
+			if hasData then
+				upgradeItemLevel = nextItemLevel
+			else
+				nextLevel = self.info.level + 1
+			end
+			self:HandlePreviewWorldRewardTooltip(itemLevel, upgradeItemLevel, nextLevel)
 		end
 		if not upgradeItemLevel then
 			GameTooltip_AddBlankLineToTooltip(GameTooltip)
@@ -318,19 +360,27 @@ local SetProgressText = function(self, text)
 			self.Progress:SetText(name)
 		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.Activities then
 			local HEROIC_ITEM_LEVEL, MYTHIC_ITEM_LEVEL = GetCurrentSeasonRewardLevels()
+			self.Progress:SetJustifyH("RIGHT")
 			if self:IsCompletedAtHeroicLevel() then
-				self.Progress:SetFormattedText("(%s) %s", GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL), WEEKLY_REWARDS_HEROIC)
+				self.Progress:SetFormattedText("%s\n%s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL))
+			elseif activityInfo.level >= 2 then
+				local rewardLevel = GetRewardLevelFromKeystoneLevel(activityInfo.level)
+				self.Progress:SetFormattedText("+%d\n%s", activityInfo.level, GetItemTierFromItemLevel(rewardLevel))
 			else
-				if activityInfo.level >= 2 then
-					local rewardLevel = GetRewardLevelFromKeystoneLevel(activityInfo.level)
-					self.Progress:SetFormattedText("(%s) +%d", GetItemTierFromItemLevel(rewardLevel), activityInfo.level)
-				else
-					local rewardLevel = MYTHIC_ITEM_LEVEL
-					self.Progress:SetFormattedText("(%s) %s", GetItemTierFromItemLevel(rewardLevel), WEEKLY_REWARDS_MYTHIC:format(activityInfo.level))
-				end
+				local rewardLevel = MYTHIC_ITEM_LEVEL
+				self.Progress:SetFormattedText("%s\n%s", WEEKLY_REWARDS_MYTHIC:format(activityInfo.level), GetItemTierFromItemLevel(rewardLevel))
 			end
 		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.RankedPvP then
 			self.Progress:SetText(PVPUtil.GetTierName(activityInfo.level))
+		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.World then
+			local itemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(activityInfo.id)
+			local itemLevel
+			if itemLink then
+				itemLevel = C_Item.GetDetailedItemLevelInfo(itemLink)
+			end
+			local rewardLevel = GetRewardLevelFromDelveLevel(activityInfo.level, itemLevel)
+			self.Progress:SetJustifyH("RIGHT")
+			self.Progress:SetFormattedText("%s\n%s", GREAT_VAULT_WORLD_TIER:format(activityInfo.level), GetItemTierFromItemLevel(rewardLevel))
 		end
 	else
 		if C_WeeklyRewards.CanClaimRewards() then
@@ -342,6 +392,7 @@ local SetProgressText = function(self, text)
 	end
 end
 
+-- Dungeons
 WeeklyRewardsFrame.Activities[5].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
 WeeklyRewardsFrame.Activities[5].ShowPreviewItemTooltip = ShowPreviewItemTooltip
 WeeklyRewardsFrame.Activities[5].SetProgressText = SetProgressText
@@ -351,3 +402,14 @@ WeeklyRewardsFrame.Activities[6].SetProgressText = SetProgressText
 WeeklyRewardsFrame.Activities[7].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
 WeeklyRewardsFrame.Activities[7].ShowPreviewItemTooltip = ShowPreviewItemTooltip
 WeeklyRewardsFrame.Activities[7].SetProgressText = SetProgressText
+
+-- World
+WeeklyRewardsFrame.Activities[8].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
+WeeklyRewardsFrame.Activities[8].ShowPreviewItemTooltip = ShowPreviewItemTooltip
+WeeklyRewardsFrame.Activities[8].SetProgressText = SetProgressText
+WeeklyRewardsFrame.Activities[9].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
+WeeklyRewardsFrame.Activities[9].ShowPreviewItemTooltip = ShowPreviewItemTooltip
+WeeklyRewardsFrame.Activities[9].SetProgressText = SetProgressText
+WeeklyRewardsFrame.Activities[10].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
+WeeklyRewardsFrame.Activities[10].ShowPreviewItemTooltip = ShowPreviewItemTooltip
+WeeklyRewardsFrame.Activities[10].SetProgressText = SetProgressText
