@@ -48,7 +48,7 @@ local ItemTiers = {
 	-- explorer we don't care about because it can't be rewarded in the vault
 }
 -- this is the minimum starting item level to go up a tier
-local ItemTierItemLevelsBySeason = {
+local ItemTierItemMinimumLevelBySeason = {
 	-- The War Within Season 1
 	[99] = {
 		["myth"] = 623,
@@ -56,6 +56,68 @@ local ItemTierItemLevelsBySeason = {
 		["champion"] = 597,
 		["veteran"] = 584,
 		["adventurer"] = 571,
+	},
+}
+-- ranks within each tier
+local ItemTierItemLevelsBySeason = {
+	-- The War Within Season 1
+	[99] = {
+		["myth"] = {
+			[623] = 1,
+			[626] = 2,
+			[629] = 3,
+			[632] = 4,
+			[636] = 5,
+			[639] = 6,
+		},
+		["hero"] = {
+			[610] = 1,
+			[613] = 2,
+			[616] = 3,
+			[619] = 4,
+			[623] = 5,
+			[626] = 6,
+		},
+		["champion"] = {
+			[597] = 1,
+			[600] = 2,
+			[603] = 3,
+			[606] = 4,
+			[610] = 5,
+			[613] = 6,
+			[616] = 7,
+			[619] = 8,
+		},
+		["veteran"] = {
+			[584] = 1,
+			[587] = 2,
+			[590] = 3,
+			[593] = 4,
+			[597] = 5,
+			[600] = 6,
+			[603] = 7,
+			[606] = 8,
+		},
+		["adventurer"] = {
+			[571] = 1,
+			[574] = 2,
+			[577] = 3,
+			[580] = 4,
+			[584] = 5,
+			[587] = 6,
+			[590] = 7,
+			[593] = 8,
+		},
+	},
+}
+local ItemTierNumRanksBySeason = {
+	-- The War Within Season 1
+	[99] = {
+		["myth"] = 6,
+		["hero"] = 6,
+		["champion"] = 8,
+		["veteran"] = 8,
+		["adventurer"] = 8,
 	},
 }
 -- fallback value
@@ -86,12 +148,14 @@ end)
 -- utility functions
 local GetItemTierFromItemLevel = function(itemLevel)
 	local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
-	local currentSeasonItemTiers = ItemTierItemLevelsBySeason[rewardSeasonID]
+	local currentSeasonItemTiers = ItemTierItemMinimumLevelBySeason[rewardSeasonID]
 	if currentSeasonItemTiers then
 		for _, itemTierKey in ipairs(ItemTiers) do
 			local itemTierItemLevel = currentSeasonItemTiers[itemTierKey]
 			if itemLevel >= itemTierItemLevel then
-				return ("%d %s"):format(itemLevel, L[itemTierKey])
+				local rank = ItemTierItemLevelsBySeason[rewardSeasonID][itemTierKey][itemLevel]
+				local maxRank = ItemTierNumRanksBySeason[rewardSeasonID][itemTierKey]
+				return ("%d - %d/%d %s"):format(itemLevel, rank, maxRank, L[itemTierKey])
 			end
 		end
 	end
