@@ -7,6 +7,7 @@ local WEEKLY_REWARDS_MYTHIC_TOP_RUNS, WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, WEEKLY_
 local WEEKLY_REWARDS_HEROIC, WEEKLY_REWARDS_MYTHIC, WEEKLY_REWARDS_MAXED_REWARD, WEEKLY_REWARDS_CURRENT_REWARD, WEEKLY_REWARDS_ITEM_LEVEL_MYTHIC, WEEKLY_REWARDS_ITEM_LEVEL_HEROIC = WEEKLY_REWARDS_HEROIC, WEEKLY_REWARDS_MYTHIC, WEEKLY_REWARDS_MAXED_REWARD, WEEKLY_REWARDS_CURRENT_REWARD, WEEKLY_REWARDS_ITEM_LEVEL_MYTHIC, WEEKLY_REWARDS_ITEM_LEVEL_HEROIC
 local GREEN_FONT_COLOR, GRAY_FONT_COLOR, GENERIC_FRACTION_STRING = GREEN_FONT_COLOR, GRAY_FONT_COLOR, GENERIC_FRACTION_STRING
 local WeeklyRewardsUtil = WeeklyRewardsUtil
+local L = LibStub("AceLocale-3.0"):GetLocale("GreatVaultKeyInfo")
 
 -- locals
 -- this is from https://wago.tools/db2/MythicPlusSeasonRewardLevels?page=1&sort[WeeklyRewardLevel]=asc&filter[MythicPlusSeasonID]=99
@@ -122,19 +123,6 @@ local ItemTierNumRanksBySeason = {
 }
 -- fallback value
 local WEEKLY_MAX_DUNGEON_THRESHOLD = 8
-
--- localization
-local L = {}
-L.reward_locked = "Reward Locked"
-L.run_to_unlock = "Run %1$d more to unlock"
-L.run_this_week = "%1$d run this week"
-L.runs_this_week = "%1$d runs this week"
-L.top_runs_this_week = "Top %d of %d Runs This Week"
-L.myth = "Myth"
-L.hero = "Hero"
-L.champion = "Champion"
-L.veteran = "Veteran"
-L.adventurer = "Adventurer"
 
 -- event frame
 local GreatVaultKeyInfoFrame = CreateFrame("Frame")

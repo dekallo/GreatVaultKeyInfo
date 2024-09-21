@@ -12,4 +12,6 @@
 ## X-Wago-ID: nQN5ePNB
 ## X-WoWI-ID: 26180
 
+embeds.xml
+Locales\locales.xml
 GreatVaultKeyInfo.lua

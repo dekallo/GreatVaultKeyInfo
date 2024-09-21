@@ -42,5 +42,6 @@ globals = {
     "GRAY_FONT_COLOR",
     "GENERIC_FRACTION_STRING",
     "tostring",
-    "WeeklyRewardsUtil"
+    "WeeklyRewardsUtil",
+    "LibStub"
 }
