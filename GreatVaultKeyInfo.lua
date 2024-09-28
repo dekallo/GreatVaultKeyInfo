@@ -342,6 +342,55 @@ local HandleEarnedDungeonRewardTooltip = function(self, blizzItemLevel)
 	end
 end
 
+local AddWorldProgress = function(threshold)
+	local activities = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.World)
+	local activity = activities[1]
+	if activity and activity.level and activity.level > 0 then
+		GameTooltip_AddBlankLineToTooltip(GameTooltip)
+		GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, threshold))
+		local previousActivityLevel = 12
+		local previousActivityProgress = 0
+		for i = 1, 3 do
+			activity = activities[i]
+			if activity and activity.level and activity.level > 0 and activity.level < previousActivityLevel and previousActivityProgress < threshold then
+				local itemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(activity.id)
+				local itemLevel = itemLink and C_Item.GetDetailedItemLevelInfo(itemLink) or nil
+				local reward = GetItemTierFromItemLevel(GetRewardLevelFromDelveLevel(activity.level, itemLevel))
+				local tier = GREAT_VAULT_WORLD_TIER:format(activity.level)
+				local rewardText = string.format("(%s) %s", reward, tier)
+				local maxLines = min(activity.progress, threshold)
+				for i = previousActivityProgress + 1, maxLines do
+					if i == threshold or i == activities[3].progress then
+						GameTooltip_AddColoredLine(GameTooltip, rewardText, GREEN_FONT_COLOR)
+					else
+						GameTooltip_AddHighlightLine(GameTooltip, rewardText)
+					end
+				end
+				previousActivityLevel = activity.level
+				previousActivityProgress = activity.progress
+			end
+		end
+	end
+end
+
+local ShowIncompleteWorldTooltip = function(self, title, description)
+	GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -7, -11)
+	GameTooltip_SetTitle(GameTooltip, title)
+	GameTooltip_AddNormalLine(GameTooltip, description:format(self.info.threshold - self.info.progress))
+	AddWorldProgress(self.info.threshold)
+	GameTooltip:Show()
+end
+
+local HandlePreviewWorldRewardTooltip = function(self, itemLevel, upgradeItemLevel, nextLevel)
+	GameTooltip_AddNormalLine(GameTooltip, string.format(WEEKLY_REWARDS_ITEM_LEVEL_WORLD, itemLevel, self.info.level))
+	if upgradeItemLevel then
+		GameTooltip_AddBlankLineToTooltip(GameTooltip)
+		GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, upgradeItemLevel), GREEN_FONT_COLOR)
+		GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_WORLD, nextLevel))
+	end
+	AddWorldProgress(self.info.threshold)
+end
+
 -- overrides CanShowPreviewItemTooltip
 -- original: https://github.com/BigWigsMods/WoWUI/blob/live/AddOns/Blizzard_WeeklyRewards/Blizzard_WeeklyRewards.lua
 local CanShowPreviewItemTooltip = function(self)
@@ -371,7 +420,7 @@ local ShowPreviewItemTooltip = function(self)
 			elseif self.info.index == 3 then
 				description = GREAT_VAULT_REWARDS_WORLD_COMPLETED_SECOND
 			end
-			self:ShowIncompleteTooltip(WEEKLY_REWARDS_UNLOCK_REWARD, description, true)
+			ShowIncompleteWorldTooltip(self, WEEKLY_REWARDS_UNLOCK_REWARD, description)
 		end
 	else
 		self.UpdateTooltip = nil
@@ -388,7 +437,7 @@ local ShowPreviewItemTooltip = function(self)
 			else
 				nextLevel = self.info.level + 1
 			end
-			self:HandlePreviewWorldRewardTooltip(itemLevel, upgradeItemLevel, nextLevel)
+			HandlePreviewWorldRewardTooltip(self, itemLevel, upgradeItemLevel, nextLevel)
 		end
 		if not upgradeItemLevel then
 			GameTooltip_AddBlankLineToTooltip(GameTooltip)
