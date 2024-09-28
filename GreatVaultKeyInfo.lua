@@ -359,8 +359,8 @@ local AddWorldProgress = function(threshold)
 				local tier = GREAT_VAULT_WORLD_TIER:format(activity.level)
 				local rewardText = string.format("(%s) %s", reward, tier)
 				local maxLines = min(activity.progress, threshold)
-				for i = previousActivityProgress + 1, maxLines do
-					if i == threshold or i == activities[3].progress then
+				for j = previousActivityProgress + 1, maxLines do
+					if j == threshold or j == activities[3].progress then
 						GameTooltip_AddColoredLine(GameTooltip, rewardText, GREEN_FONT_COLOR)
 					else
 						GameTooltip_AddHighlightLine(GameTooltip, rewardText)
