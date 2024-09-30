@@ -10,6 +10,15 @@ local WeeklyRewardsUtil = WeeklyRewardsUtil
 local L = LibStub("AceLocale-3.0"):GetLocale("GreatVaultKeyInfo")
 
 -- locals
+local RaidItemLevelsBySeason = {
+	-- The War Within Season 1
+	[99] = {
+		[17] = 584, -- LFR
+		[14] = 597, -- Normal
+		[15] = 610, -- Heroic
+		[16] = 623, -- Mythic
+	},
+}
 -- this is from https://wago.tools/db2/MythicPlusSeasonRewardLevels?page=1&sort[WeeklyRewardLevel]=asc&filter[MythicPlusSeasonID]=99
 local DungeonItemLevelsBySeason = {
 	-- The War Within Season 1
@@ -155,6 +164,14 @@ local GetCurrentSeasonRewardLevels = function()
 	if currentSeasonRewardLevels then
 		return currentSeasonRewardLevels.HEROIC, currentSeasonRewardLevels.MYTHIC
 	end
+end
+local GetRewardLevelFromRaidLevel = function(raidLevel, blizzItemLevel)
+	local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
+	local currentSeasonRewardLevels = RaidItemLevelsBySeason[rewardSeasonID]
+	if currentSeasonRewardLevels then
+		return currentSeasonRewardLevels[raidLevel] or blizzItemLevel or 0
+	end
+	return blizzItemLevel or 0
 end
 local GetRewardLevelFromKeystoneLevel = function(keystoneLevel, blizzItemLevel)
 	local rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(keystoneLevel)
@@ -457,8 +474,11 @@ local SetProgressText = function(self, text)
 		self.Progress:SetText(nil)
 	elseif self.unlocked then
 		if activityInfo.type == Enum.WeeklyRewardChestThresholdType.Raid then
-			local name = DifficultyUtil.GetDifficultyName(activityInfo.level)
-			self.Progress:SetText(name)
+			local itemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(activityInfo.id)
+			local itemLevel = itemLink and C_Item.GetDetailedItemLevelInfo(itemLink) or nil
+			local rewardLevel = GetRewardLevelFromRaidLevel(activityInfo.level, itemLevel)
+			self.Progress:SetJustifyH("RIGHT")
+			self.Progress:SetFormattedText("%s\n%s", DifficultyUtil.GetDifficultyName(activityInfo.level), GetItemTierFromItemLevel(rewardLevel))
 		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.Activities then
 			local HEROIC_ITEM_LEVEL, MYTHIC_ITEM_LEVEL = GetCurrentSeasonRewardLevels()
 			self.Progress:SetJustifyH("RIGHT")
@@ -475,10 +495,7 @@ local SetProgressText = function(self, text)
 			self.Progress:SetText(PVPUtil.GetTierName(activityInfo.level))
 		elseif activityInfo.type == Enum.WeeklyRewardChestThresholdType.World then
 			local itemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(activityInfo.id)
-			local itemLevel
-			if itemLink then
-				itemLevel = C_Item.GetDetailedItemLevelInfo(itemLink)
-			end
+			local itemLevel = itemLink and C_Item.GetDetailedItemLevelInfo(itemLink) or nil
 			local rewardLevel = GetRewardLevelFromDelveLevel(activityInfo.level, itemLevel)
 			self.Progress:SetJustifyH("RIGHT")
 			self.Progress:SetFormattedText("%s\n%s", GREAT_VAULT_WORLD_TIER:format(activityInfo.level), GetItemTierFromItemLevel(rewardLevel))
@@ -492,6 +509,11 @@ local SetProgressText = function(self, text)
 		end
 	end
 end
+
+-- Raid
+WeeklyRewardsFrame.Activities[2].SetProgressText = SetProgressText
+WeeklyRewardsFrame.Activities[3].SetProgressText = SetProgressText
+WeeklyRewardsFrame.Activities[4].SetProgressText = SetProgressText
 
 -- Dungeons
 WeeklyRewardsFrame.Activities[5].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
