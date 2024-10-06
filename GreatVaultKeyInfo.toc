@@ -2,7 +2,7 @@
 ## Version: @project-version@
 ## Author: dekallo
 ## Title: Great Vault Key Info
-## Notes: Provides more info about your keys in the Great Vault.
+## Notes: Provides more info about your rewards in the Great Vault.
 ## LoadOnDemand: 1
 ## LoadWith: Blizzard_WeeklyRewards
 ## IconTexture: Interface\AddOns\GreatVaultKeyInfo\icon
