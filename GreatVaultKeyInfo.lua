@@ -369,7 +369,7 @@ local AddWorldProgress = function(threshold)
 		local previousActivityProgress = 0
 		for i = 1, 3 do
 			activity = activities[i]
-			if activity and activity.level and activity.level > 0 and activity.level < previousActivityLevel and previousActivityProgress < threshold then
+			if activity and activity.level and activity.level > 0 and previousActivityProgress < threshold then
 				local itemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(activity.id)
 				local itemLevel = itemLink and C_Item.GetDetailedItemLevelInfo(itemLink) or nil
 				local reward = GetItemTierFromItemLevel(GetRewardLevelFromDelveLevel(activity.level, itemLevel))
