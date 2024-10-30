@@ -368,21 +368,25 @@ local AddWorldProgress = function(threshold)
 		local previousActivityProgress = 0
 		for i = 1, 3 do
 			activity = activities[i]
-			if activity and activity.level and activity.level > 0 and previousActivityProgress < threshold then
-				local itemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(activity.id)
-				local itemLevel = itemLink and C_Item.GetDetailedItemLevelInfo(itemLink) or nil
-				local reward = GetItemTierFromItemLevel(GetRewardLevelFromDelveLevel(activity.level, itemLevel))
-				local tier = GREAT_VAULT_WORLD_TIER:format(activity.level)
-				local rewardText = string.format("(%s) %s", reward, tier)
-				local maxLines = min(activity.progress, threshold)
-				for j = previousActivityProgress + 1, maxLines do
-					if j == threshold or j == activities[3].progress then
-						GameTooltip_AddColoredLine(GameTooltip, rewardText, GREEN_FONT_COLOR)
-					else
-						GameTooltip_AddHighlightLine(GameTooltip, rewardText)
+			if activity and activity.level and activity.level > 0 then
+				local maxProgress = min(activity.progress, threshold)
+				if previousActivityProgress < maxProgress then
+					local itemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(activity.id)
+					local itemLevel = itemLink and C_Item.GetDetailedItemLevelInfo(itemLink) or nil
+					local reward = GetItemTierFromItemLevel(GetRewardLevelFromDelveLevel(activity.level, itemLevel))
+					local tier = GREAT_VAULT_WORLD_TIER:format(activity.level)
+					local rewardText = string.format("(%s) %s", reward, tier)
+					for j = previousActivityProgress + 1, maxProgress do
+						if j == threshold or j == activities[3].progress then
+							GameTooltip_AddColoredLine(GameTooltip, rewardText, GREEN_FONT_COLOR)
+						else
+							GameTooltip_AddHighlightLine(GameTooltip, rewardText)
+						end
 					end
+					previousActivityProgress = activity.progress
+				else
+					break
 				end
-				previousActivityProgress = activity.progress
 			end
 		end
 	end
