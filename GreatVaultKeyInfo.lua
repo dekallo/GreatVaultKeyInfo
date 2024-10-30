@@ -365,7 +365,6 @@ local AddWorldProgress = function(threshold)
 	if activity and activity.level and activity.level > 0 then
 		GameTooltip_AddBlankLineToTooltip(GameTooltip)
 		GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, threshold))
-		local previousActivityLevel = 12
 		local previousActivityProgress = 0
 		for i = 1, 3 do
 			activity = activities[i]
@@ -383,7 +382,6 @@ local AddWorldProgress = function(threshold)
 						GameTooltip_AddHighlightLine(GameTooltip, rewardText)
 					end
 				end
-				previousActivityLevel = activity.level
 				previousActivityProgress = activity.progress
 			end
 		end
