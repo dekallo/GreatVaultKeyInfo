@@ -384,8 +384,6 @@ local AddWorldProgress = function(threshold)
 						end
 					end
 					previousActivityProgress = activity.progress
-				else
-					break
 				end
 			end
 		end
