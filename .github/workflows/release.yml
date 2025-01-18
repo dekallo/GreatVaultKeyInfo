@@ -30,7 +30,7 @@ jobs:
       # release for tags or pushes to main
       - name: Package and release
         if: ${{ github.ref_type == 'tag' || github.ref == 'refs/heads/main' }}
-        uses: BigWigsMods/packager@v2
+        uses: BigWigsMods/packager@master
         env:
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
@@ -40,6 +40,6 @@ jobs:
       # package but don't release for pushes to other branches
       - name: Package only
         if: ${{ github.ref_type == 'branch' && github.ref != 'refs/heads/main' }}
-        uses: BigWigsMods/packager@v2
+        uses: BigWigsMods/packager@master
         env:
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
