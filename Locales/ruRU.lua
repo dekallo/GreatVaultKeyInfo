@@ -1,13 +1,13 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("GreatVaultKeyInfo", "ruRU")
 if not L then return end
 
---L.reward_locked = "Reward Locked"
---L.run_to_unlock = "Run %d more to unlock"
---L.run_this_week = "%d run this week"
---L.runs_this_week = "%d runs this week"
---L.top_runs_this_week = "Top %d of %d runs this week"
---L.myth = "Myth"
---L.hero = "Hero"
---L.champion = "Champion"
---L.veteran = "Veteran"
---L.adventurer = "Adventurer"
+L.reward_locked = "Награда заблокирована"
+L.run_to_unlock = "Пройдите ещё %d, чтобы разблокировать"
+L.run_this_week = "%d прохождение на этой неделе"
+L.runs_this_week = "%d прохождений на этой неделе"
+L.top_runs_this_week = "Лучшие %d из %d прохождений на этой неделе"
+L.myth = "Легенда"
+L.hero = "Герой"
+L.champion = "Защитник"
+L.veteran = "Ветеран"
+L.adventurer = "Искатель приключений"
