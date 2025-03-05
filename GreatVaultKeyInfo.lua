@@ -75,10 +75,10 @@ local WorldItemLevelsBySeason = {
 		[2] = 626,
 		[3] = 629,
 		[4] = 632,
-		[5] = 639,
-		[6] = 645,
-		[7] = 649,
-		[8] = 655,
+		[5] = 636,
+		[6] = 642,
+		[7] = 645,
+		[8] = 649,
 	},
 }
 -- the order of entries in this table matters, must be highest tier to lowest tier
