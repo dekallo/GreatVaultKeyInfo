@@ -272,19 +272,16 @@ local GetRewardLevelFromRaidLevel = function(raidLevel, blizzItemLevel)
 	return blizzItemLevel or 0
 end
 local GetRewardLevelFromKeystoneLevel = function(keystoneLevel, blizzItemLevel)
-	local rewardLevel = C_MythicPlus.GetRewardLevelFromKeystoneLevel(keystoneLevel)
-	if rewardLevel == 0 then
-		-- sometimes Blizzard forgets to make their code work properly
-		local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
-		local currentSeasonRewardLevels = DungeonItemLevelsBySeason[rewardSeasonID]
-		if currentSeasonRewardLevels then
-			if keystoneLevel > 10 then
-				keystoneLevel = 10
-			end
-			return currentSeasonRewardLevels[keystoneLevel] or blizzItemLevel or 0
+	local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
+	local currentSeasonRewardLevels = DungeonItemLevelsBySeason[rewardSeasonID]
+	if currentSeasonRewardLevels then
+		if keystoneLevel > 10 then
+			keystoneLevel = 10
 		end
+		return currentSeasonRewardLevels[keystoneLevel] or blizzItemLevel or 0
 	end
-	return rewardLevel
+	-- as a fallback use Blizzard's unreliable API
+	return blizzItemLevel or C_MythicPlus.GetRewardLevelFromKeystoneLevel(keystoneLevel) or 0
 end
 local GetRewardLevelFromDelveLevel = function(delveLevel, blizzItemLevel)
 	local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
