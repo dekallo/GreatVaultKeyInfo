@@ -44,7 +44,7 @@ local DungeonItemLevelsBySeason = {
 	},
 	-- The War Within Season 2
 	[103] = {
-		["HEROIC"] = 623,
+		["HEROIC"] = 632,
 		["MYTHIC"] = 645,
 		[2] = 649,
 		[3] = 649,
@@ -204,7 +204,7 @@ local ItemTierItemLevelsBySeason = {
 			[662] = 1,
 			[665] = 2,
 			[668] = 3,
-			[672] = 4,
+			[671] = 4,
 			[675] = 5,
 			[678] = 6,
 		},
