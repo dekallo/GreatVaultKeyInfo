@@ -127,8 +127,8 @@ local ItemTierNumRanksBySeason = {
 		["adventurer"] = 8,
 		["veteran"] = 8,
 		["champion"] = 8,
-		["hero"] = 6,
-		["myth"] = 6,
+		["hero"] = 8,
+		["myth"] = 8,
 	},
 }
 -- fallback value
