@@ -1,5 +1,4 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("GreatVaultKeyInfo", "itIT")
-if not L then return end
 
 L.reward_locked = "Ricompensa Bloccata"
 L.run_to_unlock = "Spedizioni %d per sbloccare"

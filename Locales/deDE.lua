@@ -1,5 +1,4 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("GreatVaultKeyInfo", "deDE")
-if not L then return end
 
 --L.reward_locked = "Reward Locked"
 --L.run_to_unlock = "Run %d more to unlock"
