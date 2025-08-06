@@ -1,7 +1,8 @@
 td = "lua51"
 max_line_length = false
 codes = true
-exclude_files = {
+files["Locales/*.lua"].ignore = {
+    "211/L"
 }
 ignore = {
     "212/self"
