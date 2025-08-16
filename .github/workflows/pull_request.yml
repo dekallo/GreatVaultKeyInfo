@@ -8,7 +8,7 @@ jobs:
 
     steps:
       - name: Clone project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Run luacheck
         uses: BigWigsMods/actions/luacheck@master
