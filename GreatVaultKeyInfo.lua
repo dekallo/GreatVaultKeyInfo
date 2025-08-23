@@ -11,13 +11,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GreatVaultKeyInfo")
 
 -- locals
 local RaidItemLevelsBySeason = {
-	-- The War Within Season 2
-	[103] = {
-		[17] = 623, -- LFR
-		[14] = 636, -- Normal
-		[15] = 649, -- Heroic
-		[16] = 662, -- Mythic
-	},
 	-- The War Within Season 3
 	[108] = {
 		[17] = 671, -- LFR
@@ -28,20 +21,6 @@ local RaidItemLevelsBySeason = {
 }
 -- this is from https://wago.tools/db2/MythicPlusSeasonRewardLevels?page=1&sort[WeeklyRewardLevel]=asc&filter[MythicPlusSeasonID]=108
 local DungeonItemLevelsBySeason = {
-	-- The War Within Season 2
-	[103] = {
-		["HEROIC"] = 632,
-		["MYTHIC"] = 645,
-		[2] = 649,
-		[3] = 649,
-		[4] = 652,
-		[5] = 652,
-		[6] = 655,
-		[7] = 658,
-		[8] = 658,
-		[9] = 658,
-		[10] = 662,
-	},
 	-- The War Within Season 3
 	[108] = {
 		["HEROIC"] = 678,
@@ -58,17 +37,6 @@ local DungeonItemLevelsBySeason = {
 	},
 }
 local WorldItemLevelsBySeason = {
-	-- The War Within Season 2
-	[103] = {
-		[1] = 623,
-		[2] = 626,
-		[3] = 629,
-		[4] = 632,
-		[5] = 636,
-		[6] = 642,
-		[7] = 645,
-		[8] = 649,
-	},
 	-- The War Within Season 3
 	[108] = {
 		[1] = 668,
@@ -92,14 +60,6 @@ local ItemTiers = {
 }
 -- this is the minimum starting item level to go up a tier
 local ItemTierItemMinimumLevelBySeason = {
-	-- The War Within Season 2
-	[103] = {
-		["adventurer"] = 610,
-		["veteran"] = 623,
-		["champion"] = 636,
-		["hero"] = 649,
-		["myth"] = 662,
-	},
 	-- The War Within Season 3
 	[108] = {
 		["adventurer"] = 655,
@@ -111,55 +71,6 @@ local ItemTierItemMinimumLevelBySeason = {
 }
 -- ranks within each tier
 local ItemTierItemLevelsBySeason = {
-	-- The War Within Season 2
-	[103] = {
-		["adventurer"] = {
-			[610] = 1,
-			[613] = 2,
-			[616] = 3,
-			[619] = 4,
-			[623] = 5,
-			[626] = 6,
-			[629] = 7,
-			[632] = 8,
-		},
-		["veteran"] = {
-			[623] = 1,
-			[626] = 2,
-			[629] = 3,
-			[632] = 4,
-			[636] = 5,
-			[639] = 6,
-			[642] = 7,
-			[645] = 8,
-		},
-		["champion"] = {
-			[636] = 1,
-			[639] = 2,
-			[642] = 3,
-			[645] = 4,
-			[649] = 5,
-			[652] = 6,
-			[655] = 7,
-			[658] = 8,
-		},
-		["hero"] = {
-			[649] = 1,
-			[652] = 2,
-			[655] = 3,
-			[658] = 4,
-			[662] = 5,
-			[665] = 6,
-		},
-		["myth"] = {
-			[662] = 1,
-			[665] = 2,
-			[668] = 3,
-			[671] = 4,
-			[675] = 5,
-			[678] = 6,
-		},
-	},
 	-- The War Within Season 3
 	[108] = {
 		["adventurer"] = {
@@ -211,14 +122,6 @@ local ItemTierItemLevelsBySeason = {
 	},
 }
 local ItemTierNumRanksBySeason = {
-	-- The War Within Season 2
-	[103] = {
-		["adventurer"] = 8,
-		["veteran"] = 8,
-		["champion"] = 8,
-		["hero"] = 8,
-		["myth"] = 8,
-	},
 	-- The War Within Season 3
 	[108] = {
 		["adventurer"] = 8,
