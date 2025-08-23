@@ -144,8 +144,12 @@ GreatVaultKeyInfoFrame:SetScript("OnEvent", function(self, event_name, ...)
 end)
 
 -- utility functions
-local GetItemTierFromItemLevel = function(itemLevel)
+local GetRewardSeasonID = function()
 	local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
+	return rewardSeasonID
+end
+local GetItemTierFromItemLevel = function(itemLevel)
+	local rewardSeasonID = GetRewardSeasonID()
 	local currentSeasonItemTiers = ItemTierItemMinimumLevelBySeason[rewardSeasonID]
 	if currentSeasonItemTiers then
 		for _, itemTierKey in ipairs(ItemTiers) do
@@ -160,14 +164,14 @@ local GetItemTierFromItemLevel = function(itemLevel)
 	return tostring(itemLevel)
 end
 local GetCurrentSeasonRewardLevels = function()
-	local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
+	local rewardSeasonID = GetRewardSeasonID()
 	local currentSeasonRewardLevels = DungeonItemLevelsBySeason[rewardSeasonID]
 	if currentSeasonRewardLevels then
 		return currentSeasonRewardLevels.HEROIC, currentSeasonRewardLevels.MYTHIC
 	end
 end
 local GetRewardLevelFromRaidLevel = function(raidLevel, blizzItemLevel)
-	local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
+	local rewardSeasonID = GetRewardSeasonID()
 	local currentSeasonRewardLevels = RaidItemLevelsBySeason[rewardSeasonID]
 	if currentSeasonRewardLevels then
 		return currentSeasonRewardLevels[raidLevel] or blizzItemLevel or 0
@@ -175,7 +179,7 @@ local GetRewardLevelFromRaidLevel = function(raidLevel, blizzItemLevel)
 	return blizzItemLevel or 0
 end
 local GetRewardLevelFromKeystoneLevel = function(keystoneLevel, blizzItemLevel)
-	local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
+	local rewardSeasonID = GetRewardSeasonID()
 	local currentSeasonRewardLevels = DungeonItemLevelsBySeason[rewardSeasonID]
 	if currentSeasonRewardLevels then
 		if keystoneLevel > 10 then
@@ -187,7 +191,7 @@ local GetRewardLevelFromKeystoneLevel = function(keystoneLevel, blizzItemLevel)
 	return blizzItemLevel or C_MythicPlus.GetRewardLevelFromKeystoneLevel(keystoneLevel) or 0
 end
 local GetRewardLevelFromDelveLevel = function(delveLevel, blizzItemLevel)
-	local _, _, rewardSeasonID = C_MythicPlus.GetCurrentSeasonValues()
+	local rewardSeasonID = GetRewardSeasonID()
 	local currentSeasonRewardLevels = WorldItemLevelsBySeason[rewardSeasonID]
 	if currentSeasonRewardLevels then
 		if delveLevel > 8 then
@@ -197,7 +201,7 @@ local GetRewardLevelFromDelveLevel = function(delveLevel, blizzItemLevel)
 	end
 	return blizzItemLevel or 0
 end
-local comparison = function(entry1, entry2)
+local CompareRuns = function(entry1, entry2)
 	if entry1.level == entry2.level then
 		return entry1.mapChallengeModeID < entry2.mapChallengeModeID
 	else
@@ -235,7 +239,7 @@ local HandleInProgressDungeonRewardTooltip = function(self)
 		end
 	end
 	if #runHistory > 0 then
-		table.sort(runHistory, comparison)
+		table.sort(runHistory, CompareRuns)
 		for i = 1, #runHistory do
 			if runHistory[i] then
 				local runInfo = runHistory[i]
@@ -311,7 +315,7 @@ local HandleEarnedDungeonRewardTooltip = function(self, blizzItemLevel)
 		end
 	end
 	if #runHistory > 0 then
-		table.sort(runHistory, comparison)
+		table.sort(runHistory, CompareRuns)
 		local maxLines = self.info.threshold == calcMaxRewardThreshold and #runHistory or self.info.threshold
 		for i = 1, maxLines do
 			if runHistory[i] then
