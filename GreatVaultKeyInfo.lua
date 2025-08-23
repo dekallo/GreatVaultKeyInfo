@@ -1,6 +1,6 @@
 -- globals
 local C_MythicPlus, C_ChallengeMode, C_WeeklyRewards = C_MythicPlus, C_ChallengeMode, C_WeeklyRewards
-local C_Item, DifficultyUtil, PVPUtil, CreateFrame, max, tostring = C_Item, DifficultyUtil, PVPUtil, CreateFrame, max, tostring
+local C_Item, DifficultyUtil, PVPUtil, CreateFrame, max, tostring, C_Timer = C_Item, DifficultyUtil, PVPUtil, CreateFrame, max, tostring, C_Timer
 local WeeklyRewardsFrame, GameTooltip, Enum = WeeklyRewardsFrame, GameTooltip, Enum
 local GameTooltip_SetTitle, GameTooltip_AddNormalLine, GameTooltip_AddHighlightLine, GameTooltip_AddColoredLine, GameTooltip_AddBlankLineToTooltip = GameTooltip_SetTitle, GameTooltip_AddNormalLine, GameTooltip_AddHighlightLine, GameTooltip_AddColoredLine, GameTooltip_AddBlankLineToTooltip
 local WEEKLY_REWARDS_MYTHIC_TOP_RUNS, WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, WEEKLY_REWARDS_COMPLETE_MYTHIC_SHORT, WEEKLY_REWARDS_COMPLETE_MYTHIC = WEEKLY_REWARDS_MYTHIC_TOP_RUNS, WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, WEEKLY_REWARDS_COMPLETE_MYTHIC_SHORT, WEEKLY_REWARDS_COMPLETE_MYTHIC
@@ -131,6 +131,10 @@ local ItemTierNumRanksBySeason = {
 		["myth"] = 6,
 	},
 }
+local ExampleRaidRewardItemIDBySeason = {
+	-- The War Within Season 3
+	[108] = 237567, -- Logic Gate: Alpha
+}
 -- fallback value
 local WEEKLY_MAX_DUNGEON_THRESHOLD = 8
 
@@ -170,11 +174,16 @@ local GetCurrentSeasonRewardLevels = function()
 		return currentSeasonRewardLevels.HEROIC, currentSeasonRewardLevels.MYTHIC
 	end
 end
+local GetExampleRaidRewardItemID = function()
+	local rewardSeasonID = GetRewardSeasonID()
+	return ExampleRaidRewardItemIDBySeason[rewardSeasonID]
+end
 local GetRewardLevelFromRaidLevel = function(raidLevel, blizzItemLevel)
 	local rewardSeasonID = GetRewardSeasonID()
 	local currentSeasonRewardLevels = RaidItemLevelsBySeason[rewardSeasonID]
 	if currentSeasonRewardLevels then
-		return currentSeasonRewardLevels[raidLevel] or blizzItemLevel or 0
+		-- prefer the blizz item level because it takes into account bosses killed
+		return blizzItemLevel or currentSeasonRewardLevels[raidLevel] or 0
 	end
 	return blizzItemLevel or 0
 end
@@ -466,9 +475,23 @@ local ShowPreviewItemTooltip = function(self)
 	GameTooltip:Show()
 end
 
+local pendingActivity = {}
+function GreatVaultKeyInfoFrame:ITEM_DATA_LOAD_RESULT(event, id, success)
+	local exampleRaidRewardItemID = GetExampleRaidRewardItemID()
+	if not exampleRaidRewardItemID or id == exampleRaidRewardItemID then
+		self:UnregisterEvent(event)
+		if id == exampleRaidRewardItemID and success then
+			for i = 1, #pendingActivity do
+				pendingActivity[i]:Refresh(pendingActivity[i].info)
+			end
+			pendingActivity = {}
+		end
+	end
+end
+
 -- overrides SetProgressText
 -- original: https://github.com/BigWigsMods/WoWUI/blob/live/AddOns/Blizzard_WeeklyRewards/Blizzard_WeeklyRewards.lua
-local SetProgressText = function(self, text)
+local SetProgressText = function(self, text, isRetry)
 	local activityInfo = self.info
 	if text then
 		self.Progress:SetText(text)
@@ -477,7 +500,24 @@ local SetProgressText = function(self, text)
 	elseif self.unlocked then
 		if activityInfo.type == Enum.WeeklyRewardChestThresholdType.Raid then
 			local itemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(activityInfo.id)
-			local itemLevel = itemLink and C_Item.GetDetailedItemLevelInfo(itemLink) or nil
+			local detailedItemLevelInfo = itemLink and C_Item.GetDetailedItemLevelInfo(itemLink)
+			if not detailedItemLevelInfo then
+				pendingActivity[#pendingActivity + 1] = self
+				if #pendingActivity == 1 then
+					local exampleRaidRewardItemID = GetExampleRaidRewardItemID()
+					if exampleRaidRewardItemID then
+						GreatVaultKeyInfoFrame:RegisterEvent("ITEM_DATA_LOAD_RESULT")
+						C_Item.RequestLoadItemDataByID(exampleRaidRewardItemID)
+					elseif not isRetry then
+						-- missing season data, try again once
+						pendingActivity = {}
+						C_Timer.After(2, function()
+							self:SetProgressText(nil, true)
+						end)
+					end
+				end
+			end
+			local itemLevel = itemLink and detailedItemLevelInfo or nil
 			local rewardLevel = GetRewardLevelFromRaidLevel(activityInfo.level, itemLevel)
 			self.Progress:SetJustifyH("RIGHT")
 			self.Progress:SetFormattedText("%s\n%s", DifficultyUtil.GetDifficultyName(activityInfo.level), GetItemTierFromItemLevel(rewardLevel))
