@@ -23,9 +23,9 @@ jobs:
           fetch-depth: 0  # gets git history for changelogs
 
       - name: Run luacheck
-        uses: lunarmodules/luacheck@v1
+        uses: BigWigsMods/actions/luacheck@master
         with:
-          args: -q .
+          args: -q
 
       # release for tags or pushes to main
       - name: Package and release
