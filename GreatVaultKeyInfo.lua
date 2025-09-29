@@ -9,6 +9,8 @@ local GREEN_FONT_COLOR, GRAY_FONT_COLOR, GENERIC_FRACTION_STRING, GREAT_VAULT_WO
 local WeeklyRewardsUtil = WeeklyRewardsUtil
 local L = LibStub("AceLocale-3.0"):GetLocale("GreatVaultKeyInfo")
 
+blah = L
+
 -- locals
 local RaidItemLevelsBySeason = {
 	-- The War Within Season 3
