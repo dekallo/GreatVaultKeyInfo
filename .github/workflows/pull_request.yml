@@ -10,9 +10,6 @@ jobs:
       - name: Clone project
         uses: actions/checkout@v5
 
-      - name: luatest1
-        run: lua -v
-
       - name: Run luacheck
         uses: lunarmodules/luacheck@v1
         with:
