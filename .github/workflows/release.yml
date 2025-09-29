@@ -25,7 +25,7 @@ jobs:
       - name: Run luacheck
         uses: lunarmodules/luacheck@v1
         with:
-          args: -q
+          args: -q .
 
       # release for tags or pushes to main
       - name: Package and release
