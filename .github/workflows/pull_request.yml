@@ -15,5 +15,8 @@ jobs:
         with:
           args: -q .
 
+      - name: Install lua
+        uses: luarocks/gh-actions-lua@v11
+
       - name: luatest2
         run: lua -v
