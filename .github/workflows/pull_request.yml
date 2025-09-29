@@ -10,7 +10,13 @@ jobs:
       - name: Clone project
         uses: actions/checkout@v5
 
+      - name: luatest1
+        run: lua -v
+
       - name: Run luacheck
-        uses: BigWigsMods/actions/luacheck@master
+        uses: lunarmodules/luacheck@v1
         with:
-          args: -q
+          args: -q .
+
+      - name: luatest2
+        run: lua -v
