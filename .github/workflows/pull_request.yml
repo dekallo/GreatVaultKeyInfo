@@ -13,10 +13,4 @@ jobs:
       - name: Run luacheck
         uses: lunarmodules/luacheck@v1
         with:
-          args: -q .
-
-      - name: Install lua
-        uses: luarocks/gh-actions-lua@v11
-
-      - name: luatest
-        run: lua -v
+          args: -q . && lua -v
