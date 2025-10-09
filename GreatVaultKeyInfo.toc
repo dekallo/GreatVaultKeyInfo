@@ -1,4 +1,4 @@
-## Interface: 110200, 110205
+## Interface: 110205
 ## Version: @project-version@
 ## Author: dekallo
 ## Title: Great Vault Key Info
