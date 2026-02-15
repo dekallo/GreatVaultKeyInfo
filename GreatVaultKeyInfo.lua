@@ -13,40 +13,40 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GreatVaultKeyInfo")
 local RaidItemLevelsBySeason = {
 	-- The War Within Season 3
 	[108] = {
-		[17] = 671, -- LFR
-		[14] = 684, -- Normal
-		[15] = 697, -- Heroic
-		[16] = 710, -- Mythic
+		[17] = 108, -- LFR
+		[14] = 121, -- Normal
+		[15] = 134, -- Heroic
+		[16] = 147, -- Mythic
 	},
 }
 -- this is from https://wago.tools/db2/MythicPlusSeasonRewardLevels?page=1&sort[WeeklyRewardLevel]=asc&filter[MythicPlusSeasonID]=108
 local DungeonItemLevelsBySeason = {
 	-- The War Within Season 3
 	[108] = {
-		["HEROIC"] = 678,
-		["MYTHIC"] = 691,
-		[2] = 694,
-		[3] = 694,
-		[4] = 697,
-		[5] = 697,
-		[6] = 701,
-		[7] = 704,
-		[8] = 704,
-		[9] = 704,
-		[10] = 707,
+		["HEROIC"] = 118,
+		["MYTHIC"] = 131,
+		[2] = 134,
+		[3] = 134,
+		[4] = 137,
+		[5] = 137,
+		[6] = 141,
+		[7] = 144,
+		[8] = 144,
+		[9] = 144,
+		[10] = 147,
 	},
 }
 local WorldItemLevelsBySeason = {
 	-- The War Within Season 3
 	[108] = {
-		[1] = 668,
-		[2] = 671,
-		[3] = 675,
-		[4] = 678,
-		[5] = 681,
-		[6] = 688,
-		[7] = 691,
-		[8] = 694,
+		[1] = 108,
+		[2] = 111,
+		[3] = 115,
+		[4] = 118,
+		[5] = 121,
+		[6] = 128,
+		[7] = 131,
+		[8] = 134,
 	},
 }
 -- the order of entries in this table matters, must be highest tier to lowest tier
@@ -62,11 +62,11 @@ local ItemTiers = {
 local ItemTierItemMinimumLevelBySeason = {
 	-- The War Within Season 3
 	[108] = {
-		["adventurer"] = 655,
-		["veteran"] = 668,
-		["champion"] = 681,
-		["hero"] = 694,
-		["myth"] = 707,
+		["adventurer"] = 102,
+		["veteran"] = 108,
+		["champion"] = 121,
+		["hero"] = 134,
+		["myth"] = 147,
 	},
 }
 -- ranks within each tier
@@ -74,50 +74,54 @@ local ItemTierItemLevelsBySeason = {
 	-- The War Within Season 3
 	[108] = {
 		["adventurer"] = {
-			[655] = 1,
-			[658] = 2,
-			[662] = 3,
-			[665] = 4,
-			[668] = 5,
-			[671] = 6,
-			[675] = 7,
-			[678] = 8,
+			[102] = 1,
+			[103] = 2,
+			[104] = 3,
+			[105] = 4,
+			[108] = 5,
+			[111] = 6,
+			[115] = 7,
+			[118] = 8,
 		},
 		["veteran"] = {
-			[668] = 1,
-			[671] = 2,
-			[675] = 3,
-			[678] = 4,
-			[681] = 5,
-			[684] = 6,
-			[688] = 7,
-			[691] = 8,
+			[108] = 1,
+			[111] = 2,
+			[115] = 3,
+			[118] = 4,
+			[121] = 5,
+			[124] = 6,
+			[128] = 7,
+			[131] = 8,
 		},
 		["champion"] = {
-			[681] = 1,
-			[684] = 2,
-			[688] = 3,
-			[691] = 4,
-			[694] = 5,
-			[697] = 6,
-			[701] = 7,
-			[704] = 8,
+			[121] = 1,
+			[124] = 2,
+			[128] = 3,
+			[131] = 4,
+			[134] = 5,
+			[137] = 6,
+			[141] = 7,
+			[144] = 8,
 		},
 		["hero"] = {
-			[694] = 1,
-			[697] = 2,
-			[701] = 3,
-			[704] = 4,
-			[707] = 5,
-			[710] = 6,
+			[134] = 1,
+			[137] = 2,
+			[141] = 3,
+			[144] = 4,
+			[147] = 5,
+			[150] = 6,
+			[154] = 7,
+			[157] = 8,
 		},
 		["myth"] = {
-			[707] = 1,
-			[710] = 2,
-			[714] = 3,
-			[717] = 4,
-			[720] = 5,
-			[723] = 6,
+			[147] = 1,
+			[150] = 2,
+			[154] = 3,
+			[157] = 4,
+			[160] = 5,
+			[163] = 6,
+			[167] = 7,
+			[170] = 8,
 		},
 	},
 }
