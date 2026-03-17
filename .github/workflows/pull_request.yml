@@ -14,4 +14,3 @@ jobs:
         uses: dekallo/luacheck@main
         with:
           args: -q
-          annotate: warning
