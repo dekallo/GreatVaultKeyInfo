@@ -49,6 +49,9 @@ local WorldItemLevelsBySeason = {
 		[8] = 259,
 	},
 }
+-- luacheck test: undefined variable (remove before merge)
+local _ = typo_undefined_variable
+
 -- the order of entries in this table matters, must be highest tier to lowest tier
 local ItemTiers = {
 	"myth",
