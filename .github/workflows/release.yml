@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0  # gets git history for changelogs
 
       - name: Run luacheck
-        uses: BigWigsMods/actions/luacheck@master
+        uses: dekallo/luacheck@main
         with:
           args: -q
 
