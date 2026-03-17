@@ -3,7 +3,7 @@ name: Package addon
 on:
   push:
     branches:
-      - '**'
+      - main
     tags:
       - '**'
     paths-ignore:
