@@ -26,6 +26,7 @@ jobs:
         uses: dekallo/luacheck@main
         with:
           args: -q
+          annotate: warning
 
       # release for tags or pushes to main
       - name: Package and release
