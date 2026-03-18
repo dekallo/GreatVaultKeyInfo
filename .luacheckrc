@@ -8,7 +8,6 @@ ignore = {
     "212/self"
 }
 globals = {
-    "C_ChallengeMode",
     "C_Item",
     "C_MythicPlus",
     "C_Timer",

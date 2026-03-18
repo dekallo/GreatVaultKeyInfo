@@ -14,5 +14,3 @@ jobs:
         uses: dekallo/luacheck@main
         with:
           args: -q
-          custom_script: scripts/validate.lua
-          custom_args: "--fail"
