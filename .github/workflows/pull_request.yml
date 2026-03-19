@@ -5,6 +5,7 @@ on: [pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    container: ghcr.io/dekallo/luacheck:latest
 
     steps:
       - name: Clone project
@@ -14,3 +15,5 @@ jobs:
         uses: dekallo/luacheck@main
         with:
           args: -q
+          custom_script: scripts/ci_validate.lua
+          custom_args: .
