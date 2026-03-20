@@ -1,5 +1,4 @@
 name: Package addon
-
 on:
   push:
     branches:
@@ -9,25 +8,19 @@ on:
     paths-ignore:
       - '.github/**'
       - '*.md'
-  # allows this workflow to be run manually from the Actions tab
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Clone project
         uses: actions/checkout@v6
         with:
           fetch-depth: 0  # gets git history for changelogs
-
       - name: Run luacheck
         uses: dekallo/luacheck@main
         with:
           args: -q
-
-      # release for tags or pushes to main
       - name: Package and release
         if: ${{ github.ref_type == 'tag' || github.ref == 'refs/heads/main' }}
         uses: BigWigsMods/packager@master
@@ -36,10 +29,3 @@ jobs:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
           WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
-
-      # package but don't release for pushes to other branches
-      - name: Package only
-        if: ${{ github.ref_type == 'branch' && github.ref != 'refs/heads/main' }}
-        uses: BigWigsMods/packager@master
-        env:
-          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
