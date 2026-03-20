@@ -15,3 +15,4 @@ jobs:
           args: -q
           custom_script: scripts/ci_validate.lua
           custom_args: .
+          job_summary: true
