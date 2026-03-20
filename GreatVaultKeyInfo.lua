@@ -49,6 +49,7 @@ local WorldItemLevelsBySeason = {
 		[8] = 259,
 	},
 }
+blah = 1
 -- the order of entries in this table matters, must be highest tier to lowest tier
 local ItemTiers = {
 	"myth",
