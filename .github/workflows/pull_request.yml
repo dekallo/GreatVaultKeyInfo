@@ -13,6 +13,7 @@ jobs:
 
       - name: Run validate
         uses: dekallo/luacheck@main
+        if: always()
         with:
           run_luacheck: false
           custom_script: scripts/validate.lua
