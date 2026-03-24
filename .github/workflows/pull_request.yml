@@ -10,6 +10,10 @@ jobs:
         uses: dekallo/luacheck@main
         with:
           args: -q
-          custom_script: scripts/ci_validate.lua
+
+      - name: Run validate
+        uses: dekallo/luacheck@main
+        with:
+          run_luacheck: false
+          custom_script: scripts/validate.lua
           custom_args: .
-          job_summary: true
