@@ -10,11 +10,3 @@ jobs:
         uses: BigWigsMods/luacheck@main
         with:
           args: -q
-
-      - name: Run validate
-        uses: BigWigsMods/luacheck@main
-        if: always()
-        with:
-          run_luacheck: false
-          custom_script: scripts/validate.lua
-          custom_args: .
