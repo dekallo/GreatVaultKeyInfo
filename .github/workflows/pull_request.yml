@@ -7,12 +7,12 @@ jobs:
       - name: Clone project
         uses: actions/checkout@v6
       - name: Run luacheck
-        uses: dekallo/luacheck@main
+        uses: BigWigsMods/luacheck@main
         with:
           args: -q
 
       - name: Run validate
-        uses: dekallo/luacheck@main
+        uses: BigWigsMods/luacheck@main
         if: always()
         with:
           run_luacheck: false
