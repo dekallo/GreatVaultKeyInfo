@@ -7,7 +7,6 @@ on:
       - '**'
     paths-ignore:
       - '.github/**'
-      - '*.md'
   workflow_dispatch:
 jobs:
   build:
@@ -22,10 +21,10 @@ jobs:
         with:
           args: -q
       - name: Package and release
-        if: ${{ github.ref_type == 'tag' || github.ref == 'refs/heads/main' }}
+        if: github.repository == 'dekallo/GreatVaultKeyInfo' && (github.ref_type == 'tag' || github.ref == 'refs/heads/main')
         uses: BigWigsMods/packager@master
         env:
-          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
-          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
           WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
