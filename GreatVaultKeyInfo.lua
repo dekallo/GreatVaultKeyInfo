@@ -1,3 +1,5 @@
+local _, GreatVaultKeyInfo = ...
+
 -- globals
 local C_MythicPlus, C_ChallengeMode, C_WeeklyRewards = C_MythicPlus, C_ChallengeMode, C_WeeklyRewards
 local C_Item, DifficultyUtil, PVPUtil, CreateFrame, max, tostring, C_Timer = C_Item, DifficultyUtil, PVPUtil, CreateFrame, max, tostring, C_Timer
@@ -9,129 +11,19 @@ local GREEN_FONT_COLOR, GRAY_FONT_COLOR, GENERIC_FRACTION_STRING, GREAT_VAULT_WO
 local WeeklyRewardsUtil = WeeklyRewardsUtil
 local L = LibStub("AceLocale-3.0"):GetLocale("GreatVaultKeyInfo")
 
--- locals
-local RaidItemLevelsBySeason = {
-	-- Midnight Season 1
-	[117] = {
-		[17] = 233, -- LFR
-		[14] = 246, -- Normal
-		[15] = 259, -- Heroic
-		[16] = 272, -- Mythic
-	},
-}
--- this is from https://wago.tools/db2/MythicPlusSeasonRewardLevels?page=1&sort[WeeklyRewardLevel]=asc&filter[MythicPlusSeasonID]=117
-local DungeonItemLevelsBySeason = {
-	-- Midnight Season 1
-	[117] = {
-		["HEROIC"] = 243,
-		["MYTHIC"] = 256,
-		[2] = 259,
-		[3] = 259,
-		[4] = 263,
-		[5] = 263,
-		[6] = 266,
-		[7] = 269,
-		[8] = 269,
-		[9] = 269,
-		[10] = 272,
-	},
-}
-local WorldItemLevelsBySeason = {
-	-- Midnight Season 1
-	[117] = {
-		[1] = 233,
-		[2] = 237,
-		[3] = 240,
-		[4] = 243,
-		[5] = 246,
-		[6] = 253,
-		[7] = 256,
-		[8] = 259,
-	},
-}
--- the order of entries in this table matters, must be highest tier to lowest tier
-local ItemTiers = {
-	"myth",
-	"hero",
-	"champion",
-	"veteran",
-	"adventurer",
-	--"explorer", we don't care about explorer because it can't be rewarded in the vault
-}
--- this is the minimum starting item level to go up a tier (the lowest values in the below table)
-local ItemTierItemMinimumLevelBySeason = {
-	-- Midnight Season 1
-	[117] = {
-		["adventurer"] = 220,
-		["veteran"] = 233,
-		["champion"] = 246,
-		["hero"] = 259,
-		["myth"] = 272,
-	},
-}
--- ranks within each tier
-local ItemTierItemLevelsBySeason = {
-	-- Midnight Season 1
-	[117] = {
-		["adventurer"] = {
-			[220] = 1,
-			[224] = 2,
-			[227] = 3,
-			[230] = 4,
-			[233] = 5,
-			[237] = 6,
-		},
-		["veteran"] = {
-			[233] = 1,
-			[237] = 2,
-			[240] = 3,
-			[243] = 4,
-			[246] = 5,
-			[250] = 6,
-		},
-		["champion"] = {
-			[246] = 1,
-			[250] = 2,
-			[253] = 3,
-			[256] = 4,
-			[259] = 5,
-			[263] = 6,
-		},
-		["hero"] = {
-			[259] = 1,
-			[263] = 2,
-			[266] = 3,
-			[269] = 4,
-			[272] = 5,
-			[276] = 6,
-		},
-		["myth"] = {
-			[272] = 1,
-			[276] = 2,
-			[279] = 3,
-			[282] = 4,
-			[285] = 5,
-			[289] = 6,
-		},
-	},
-}
-local ItemTierNumRanksBySeason = {
-	-- Midnight Season 1
-	[117] = {
-		["adventurer"] = 6,
-		["veteran"] = 6,
-		["champion"] = 6,
-		["hero"] = 6,
-		["myth"] = 6,
-	},
-}
-local ExampleRaidRewardItemIDBySeason = {
-	-- Midnight Season 1
-	[117] = 249336, -- Signet of the Starved Beast
-}
--- fallback value
-local WEEKLY_MAX_DUNGEON_THRESHOLD = 8
-local WEEKLY_MAX_WORLD_THRESHOLD = 8
+-- seasonal data (access with [seasonId])
+local RaidItemLevels = GreatVaultKeyInfo.RaidItemLevels
+local DungeonItemLevels = GreatVaultKeyInfo.DungeonItemLevels
+local WorldItemLevels = GreatVaultKeyInfo.WorldItemLevels
+local ItemTierItemMinimumLevel = GreatVaultKeyInfo.ItemTierItemMinimumLevel
+local ItemTierItemLevels = GreatVaultKeyInfo.ItemTierItemLevels
+local ItemTierNumRanks = GreatVaultKeyInfo.ItemTierNumRanks
+local ExampleRaidRewardItemID = GreatVaultKeyInfo.ExampleRaidRewardItemID
+
+-- shared constants
+local ItemTiers = GreatVaultKeyInfo.ItemTiers
+local WEEKLY_MAX_DUNGEON_THRESHOLD = GreatVaultKeyInfo.WEEKLY_MAX_DUNGEON_THRESHOLD
+local WEEKLY_MAX_WORLD_THRESHOLD = GreatVaultKeyInfo.WEEKLY_MAX_WORLD_THRESHOLD
 
 -- event frame
 local GreatVaultKeyInfoFrame = CreateFrame("Frame")
@@ -149,13 +41,13 @@ local GetRewardSeasonID = function()
 end
 local GetItemTierFromItemLevel = function(itemLevel)
 	local rewardSeasonID = GetRewardSeasonID()
-	local currentSeasonItemTiers = ItemTierItemMinimumLevelBySeason[rewardSeasonID]
+	local currentSeasonItemTiers = ItemTierItemMinimumLevel[rewardSeasonID]
 	if currentSeasonItemTiers then
 		for _, itemTierKey in ipairs(ItemTiers) do
 			local itemTierItemLevel = currentSeasonItemTiers[itemTierKey]
 			if itemLevel >= itemTierItemLevel then
-				local rank = ItemTierItemLevelsBySeason[rewardSeasonID][itemTierKey][itemLevel]
-				local maxRank = ItemTierNumRanksBySeason[rewardSeasonID][itemTierKey]
+				local rank = ItemTierItemLevels[rewardSeasonID][itemTierKey][itemLevel]
+				local maxRank = ItemTierNumRanks[rewardSeasonID][itemTierKey]
 				return ("%d - %d/%d %s"):format(itemLevel, rank, maxRank, L[itemTierKey])
 			end
 		end
@@ -164,18 +56,18 @@ local GetItemTierFromItemLevel = function(itemLevel)
 end
 local GetCurrentSeasonRewardLevels = function()
 	local rewardSeasonID = GetRewardSeasonID()
-	local currentSeasonRewardLevels = DungeonItemLevelsBySeason[rewardSeasonID]
+	local currentSeasonRewardLevels = DungeonItemLevels[rewardSeasonID]
 	if currentSeasonRewardLevels then
 		return currentSeasonRewardLevels.HEROIC, currentSeasonRewardLevels.MYTHIC
 	end
 end
 local GetExampleRaidRewardItemID = function()
 	local rewardSeasonID = GetRewardSeasonID()
-	return ExampleRaidRewardItemIDBySeason[rewardSeasonID]
+	return ExampleRaidRewardItemID[rewardSeasonID]
 end
 local GetRewardLevelFromRaidLevel = function(raidLevel, blizzItemLevel)
 	local rewardSeasonID = GetRewardSeasonID()
-	local currentSeasonRewardLevels = RaidItemLevelsBySeason[rewardSeasonID]
+	local currentSeasonRewardLevels = RaidItemLevels[rewardSeasonID]
 	if currentSeasonRewardLevels then
 		-- prefer the blizz item level because it takes into account bosses killed
 		return blizzItemLevel or currentSeasonRewardLevels[raidLevel] or 0
@@ -184,7 +76,7 @@ local GetRewardLevelFromRaidLevel = function(raidLevel, blizzItemLevel)
 end
 local GetRewardLevelFromKeystoneLevel = function(keystoneLevel, blizzItemLevel)
 	local rewardSeasonID = GetRewardSeasonID()
-	local currentSeasonRewardLevels = DungeonItemLevelsBySeason[rewardSeasonID]
+	local currentSeasonRewardLevels = DungeonItemLevels[rewardSeasonID]
 	if currentSeasonRewardLevels then
 		if keystoneLevel > 10 then
 			keystoneLevel = 10
@@ -196,7 +88,7 @@ local GetRewardLevelFromKeystoneLevel = function(keystoneLevel, blizzItemLevel)
 end
 local GetRewardLevelFromDelveLevel = function(delveLevel, blizzItemLevel)
 	local rewardSeasonID = GetRewardSeasonID()
-	local currentSeasonRewardLevels = WorldItemLevelsBySeason[rewardSeasonID]
+	local currentSeasonRewardLevels = WorldItemLevels[rewardSeasonID]
 	if currentSeasonRewardLevels then
 		if delveLevel > 8 then
 			delveLevel = 8

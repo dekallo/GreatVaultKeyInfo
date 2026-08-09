@@ -19,4 +19,5 @@
 #@end-non-debug@
 Locales\enUS.lua
 Locales\[TextLocale].lua [AllowLoadTextLocale deDE, esES, esMX, frFR, itIT, koKR, ptBR, ruRU, zhCN, zhTW]
+Constants.lua
 GreatVaultKeyInfo.lua
