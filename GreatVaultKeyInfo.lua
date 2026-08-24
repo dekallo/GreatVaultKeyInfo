@@ -461,35 +461,14 @@ local SetProgressText = function(self, text, isRetry)
 	end
 end
 
--- Raid
---WeeklyRewardsFrame.Activities[2].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
---WeeklyRewardsFrame.Activities[2].ShowPreviewItemTooltip = ShowPreviewItemTooltip
-WeeklyRewardsFrame.Activities[2].SetProgressText = SetProgressText
---WeeklyRewardsFrame.Activities[3].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
---WeeklyRewardsFrame.Activities[3].ShowPreviewItemTooltip = ShowPreviewItemTooltip
-WeeklyRewardsFrame.Activities[3].SetProgressText = SetProgressText
---WeeklyRewardsFrame.Activities[4].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
---WeeklyRewardsFrame.Activities[4].ShowPreviewItemTooltip = ShowPreviewItemTooltip
-WeeklyRewardsFrame.Activities[4].SetProgressText = SetProgressText
-
--- Dungeons
-WeeklyRewardsFrame.Activities[5].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
-WeeklyRewardsFrame.Activities[5].ShowPreviewItemTooltip = ShowPreviewItemTooltip
-WeeklyRewardsFrame.Activities[5].SetProgressText = SetProgressText
-WeeklyRewardsFrame.Activities[6].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
-WeeklyRewardsFrame.Activities[6].ShowPreviewItemTooltip = ShowPreviewItemTooltip
-WeeklyRewardsFrame.Activities[6].SetProgressText = SetProgressText
-WeeklyRewardsFrame.Activities[7].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
-WeeklyRewardsFrame.Activities[7].ShowPreviewItemTooltip = ShowPreviewItemTooltip
-WeeklyRewardsFrame.Activities[7].SetProgressText = SetProgressText
-
--- World
-WeeklyRewardsFrame.Activities[8].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
-WeeklyRewardsFrame.Activities[8].ShowPreviewItemTooltip = ShowPreviewItemTooltip
-WeeklyRewardsFrame.Activities[8].SetProgressText = SetProgressText
-WeeklyRewardsFrame.Activities[9].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
-WeeklyRewardsFrame.Activities[9].ShowPreviewItemTooltip = ShowPreviewItemTooltip
-WeeklyRewardsFrame.Activities[9].SetProgressText = SetProgressText
-WeeklyRewardsFrame.Activities[10].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
-WeeklyRewardsFrame.Activities[10].ShowPreviewItemTooltip = ShowPreviewItemTooltip
-WeeklyRewardsFrame.Activities[10].SetProgressText = SetProgressText
+-- iterate and hook activity frames by type
+for _, frame in ipairs(WeeklyRewardsFrame.Activities) do
+	local frameType = frame.type
+	if frameType == Enum.WeeklyRewardChestThresholdType.Raid then
+		frame.SetProgressText = SetProgressText
+	elseif frameType == Enum.WeeklyRewardChestThresholdType.Activities or frameType == Enum.WeeklyRewardChestThresholdType.World then
+		frame.CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
+		frame.ShowPreviewItemTooltip = ShowPreviewItemTooltip
+		frame.SetProgressText = SetProgressText
+	end
+end
