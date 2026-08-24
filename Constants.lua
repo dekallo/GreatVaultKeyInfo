@@ -116,9 +116,15 @@ GreatVaultKeyInfo.ItemTierNumRanks = {
     },
 }
 
+-- To find a season's example raid reward item ID: open the Great Vault window, then
+-- run this macro. Item ID is the number after "item:" in the "ex" lines.
+-- (Raid slots have no rewards entries; the displayed item is the example item, and the
+-- window must be open so item data is loaded. Raid=3 in WeeklyRewardChestThresholdType.)
+--
+-- /run for i=1,3 do local f=WeeklyRewardsFrame:GetActivityFrame(3,i) if f and f.info then for _,r in ipairs(f.info.rewards) do print("rw",r.type,r.id) end local l=C_WeeklyRewards.GetExampleRewardItemHyperlinks(f.info.id) if l then print("ex",l) end end end
 GreatVaultKeyInfo.ExampleRaidRewardItemID = {
     -- Midnight Season 2
-    --[120] = TODO,
+    [120] = 270175, -- Voracious Heart of Ula'tek
 }
 
 -- the order of entries in this table matters, must be highest tier to lowest tier
