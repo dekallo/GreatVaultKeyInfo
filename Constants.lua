@@ -112,7 +112,7 @@ GreatVaultKeyInfo.ItemTierNumRanks = {
         ["veteran"] = 6,
         ["champion"] = 6,
         ["hero"] = 6,
-        ["myth"] = 9,
+        ["myth"] = 6,
     },
 }
 
