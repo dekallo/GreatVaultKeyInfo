@@ -1,4 +1,4 @@
-## Interface: 120105
+## Interface: 120105, 120107
 ## Version: @project-version@
 ## Author: dekallo
 ## Title: Great Vault Key Info
